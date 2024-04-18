@@ -1,0 +1,59 @@
+Time,Type
+2024-04-05 15:38:59.000,Twist detected - sampling (re-)started
+2024-04-05 15:38:59.000,Switch to internal battery occurred
+2024-04-05 15:39:10.625,Twist detected - sampling paused
+2024-04-05 15:40:11.000,Wifi module powered off
+2024-04-08 13:08:25.000,Wifi module powered on
+2024-04-08 13:08:28.000,Twist detected - sampling (re-)started
+2024-04-08 13:08:28.000,Wifi module powered off
+2024-04-08 13:08:35.750,Twist detected - sampling paused
+2024-04-08 13:08:36.000,Wifi module powered on
+2024-04-08 13:08:45.000,Twist detected - sampling (re-)started
+2024-04-08 13:09:12.375,Profile - downcast detected
+2024-04-08 13:09:26.000,Wifi module powered off
+2024-04-08 13:10:25.750,Profile - end of cast detected
+2024-04-08 13:10:25.750,Profile - upcast detected
+2024-04-08 13:11:01.000,Wifi module powered on
+2024-04-08 13:11:06.125,Profile - end of cast detected
+2024-04-08 13:11:24.375,Twist detected - sampling paused
+2024-04-08 13:12:25.000,Wifi module powered off
+2024-04-11 14:52:22.000,Wifi module powered on
+2024-04-11 14:52:23.000,Twist detected - sampling paused
+2024-04-11 14:52:25.000,Twist detected - sampling (re-)started
+2024-04-11 14:52:57.000,Reset occurred - some parameters recovered
+2024-04-11 14:52:57.000,Switch to internal battery occurred
+2024-04-11 14:52:57.000,Wifi module powered on
+2024-04-11 14:54:06.000,Wifi module powered off
+2024-04-17 14:56:55.000,Wifi module powered on
+2024-04-17 14:56:58.000,Twist detected - sampling (re-)started
+2024-04-17 14:57:03.875,Twist detected - sampling paused
+2024-04-17 14:58:04.000,Wifi module powered off
+2024-04-17 15:37:31.000,Wifi module powered on
+2024-04-17 15:37:34.000,Twist detected - sampling (re-)started
+2024-04-17 15:37:42.125,Profile - downcast detected
+2024-04-17 15:37:57.000,Wifi module powered off
+2024-04-17 15:38:36.875,Profile - end of cast detected
+2024-04-17 15:38:36.875,Profile - upcast detected
+2024-04-17 15:39:00.000,Wifi module powered on
+2024-04-17 15:39:06.000,Profile - end of cast detected
+2024-04-17 15:39:32.750,Twist detected - sampling paused
+2024-04-17 15:40:33.000,Wifi module powered off
+2024-04-17 16:24:24.000,Wifi module powered on
+2024-04-17 16:24:28.000,Twist detected - sampling (re-)started
+2024-04-17 16:24:31.375,Profile - downcast detected
+2024-04-17 16:24:43.000,Wifi module powered off
+2024-04-17 16:25:43.000,Profile - end of cast detected
+2024-04-17 16:25:43.000,Profile - upcast detected
+2024-04-17 16:25:58.000,Wifi module powered on
+2024-04-17 16:26:02.500,Profile - end of cast detected
+2024-04-17 16:26:09.750,Twist detected - sampling paused
+2024-04-17 16:27:10.000,Wifi module powered off
+2024-04-17 17:07:48.000,Wifi module powered on
+2024-04-17 17:07:51.000,Twist detected - sampling (re-)started
+2024-04-17 17:07:52.000,Profile - downcast detected
+2024-04-17 17:08:00.000,Wifi module powered off
+2024-04-17 17:08:59.875,Profile - end of cast detected
+2024-04-17 17:08:59.875,Profile - upcast detected
+2024-04-17 17:09:17.000,Wifi module powered on
+2024-04-17 17:09:22.000,Profile - end of cast detected
+2024-04-17 17:09:37.000,Twist detected - sampling paused
