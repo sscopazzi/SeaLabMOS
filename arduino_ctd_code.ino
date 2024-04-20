@@ -1,18 +1,20 @@
-  _    _                      _                          _____ _______ _____  
- | |  | |                    | |                        / ____|__   __|  __ \ 
- | |__| | ___  _ __ ___   ___| |__  _ __ _____      __ | |       | |  | |  | |
- |  __  |/ _ \| '_ ` _ \ / _ \ '_ \| '__/ _ \ \ /\ / / | |       | |  | |  | |
- | |  | | (_) | | | | | |  __/ |_) | | |  __/\ V  V /  | |____   | |  | |__| |
- |_|  |_|\___/|_| |_| |_|\___|_.__/|_|  \___| \_/\_/    \_____|  |_|  |_____/ 
+//  _    _                      _                          _____ _______ _____  
+// | |  | |                    | |                        / ____|__   __|  __ \ 
+// | |__| | ___  _ __ ___   ___| |__  _ __ _____      __ | |       | |  | |  | |
+// |  __  |/ _ \| '_ ` _ \ / _ \ '_ \| '__/ _ \ \ /\ / / | |       | |  | |  | |
+// | |  | | (_) | | | | | |  __/ |_) | | |  __/\ V  V /  | |____   | |  | |__| |
+// |_|  |_|\___/|_| |_| |_|\___|_.__/|_|  \___| \_/\_/    \_____|  |_|  |_____/ 
 
 // Order of CSV
-// EC , TDS , SAL , mbar, C , meters 
+// EC , TDS , SAL , specific gravity , mbar, C , meters 
+// TDS - Total Dissolved Solids
 
 //This code was written in the Arduino 1.8.57.0
-
-// TDS - Total Dissolved Solids
+// Old cal values, unknown date
 // 12,940 for 12880 23.0C      12,396 is actual thing to input 
 // 80,000 for 61601 at 22.4C   76,048 as actual thing to input 
+
+// Salinity calibrated 2024.4.20 
 
 //Blue Robotics
 #include <Wire.h>
@@ -150,6 +152,7 @@ sensor.read();
   Serial.print(sensor.temperature()); //C
   Serial.print(",");
   Serial.print(sensor.depth()); //meters
+  
   Serial.println();
   
   delay(250); //found this delay works best
@@ -163,8 +166,8 @@ File dataFile = SD.open("dataFile.txt", FILE_WRITE);
   dataFile.print(",");
   dataFile.print(SAL);      //this is the salinity value
   dataFile.print(",");
-  //dataFile.print(GRAV);   //this is the specific gravity
-  //dataFile.print(",");
+  dataFile.print(GRAV);   //this is the specific gravity
+  dataFile.print(",");
   
 //Save Blue Robot data to SD card
 sensor.read();
