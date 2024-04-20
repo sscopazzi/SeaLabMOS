@@ -6,7 +6,7 @@
 // |_|  |_|\___/|_| |_| |_|\___|_.__/|_|  \___| \_/\_/    \_____|  |_|  |_____/ 
 
 // Order of CSV
-// EC , TDS , SAL , specific gravity , mbar, C , meters 
+// EC , TDS , SAL , mbar, C , meters 
 // TDS - Total Dissolved Solids
 
 //This code was written in the Arduino 1.8.57.0
@@ -127,35 +127,35 @@ void print_EC_data(void) {                            //this function will pars 
 
 //PRINT TO SERIAL MONITOR
   //Serial.print("EC:");     //we now print each value we parsed separately
-  Serial.print(EC);          //this is the EC value
-  Serial.print(",");
+//  Serial.print(EC);          //this is the EC value
+//  Serial.print(",");
 
   //Serial.print("TDS:");    //we now print each value we parsed separately
-  Serial.print(TDS);         //this is the TDS value
-  Serial.print(",");
+//  Serial.print(TDS);         //this is the TDS value
+//  Serial.print(",");
   
   //Serial.print("SAL:");    //we now print each value we parsed separately
-  Serial.print(SAL);         //this is the salinity value
-  Serial.print(",");
+//  Serial.print(SAL);         //this is the salinity value
+//  Serial.print(",");
   
   //Serial.print("GRAV:");   //we now print each value we parsed separately
-  Serial.print(GRAV);        //this is the specific gravity
-  Serial.print(",");
+//  Serial.print(GRAV);        //this is the specific gravity
+//  Serial.print(",");
   //Serial.println();        //this just makes the output easier to read
   
 //f_ec= atof(EC);            //uncomment this line to convert the char to a float
 
 ///////BLUE ROBOT, read sensor
-sensor.read();
-  Serial.print(sensor.pressure()); //mbar
-  Serial.print(",");
-  Serial.print(sensor.temperature()); //C
-  Serial.print(",");
-  Serial.print(sensor.depth()); //meters
+//sensor.read();
+//  Serial.print(sensor.pressure()); //mbar
+//  Serial.print(",");
+//  Serial.print(sensor.temperature()); //C
+//  Serial.print(",");
+//  Serial.print(sensor.depth()); //meters
+//  
+//  Serial.println();
   
-  Serial.println();
-  
-  delay(250); //found this delay works best
+//  delay(250); //found this delay works best
 
 //Save EC data to SD card
 File dataFile = SD.open("dataFile.txt", FILE_WRITE);
@@ -166,8 +166,8 @@ File dataFile = SD.open("dataFile.txt", FILE_WRITE);
   dataFile.print(",");
   dataFile.print(SAL);      //this is the salinity value
   dataFile.print(",");
-  dataFile.print(GRAV);   //this is the specific gravity
-  dataFile.print(",");
+  //dataFile.print(GRAV);     //this is the specific gravity
+  //dataFile.print(",");
   
 //Save Blue Robot data to SD card
 sensor.read();
@@ -182,5 +182,5 @@ sensor.read();
 // closes the file to ensure the file was written:
     dataFile.close();
   
-delay(750);
+delay(100);
 }
