@@ -1,7 +1,7 @@
-# Homebrew_Arduino_CTD
+# HSeaLabCTD
 Everything you need to know to make an Arduino CTD from scratch with no experience and basic tools.
 
-Please see Homebrew_Arduino_CTD_Manual.pdf
+Please see SeaLabCTDv1.pdf
 
 ## Sensors (see Chapter 3 in Manual)
 [Arduino Uno R3](https://docs.arduino.cc/hardware/uno-rev3/)
