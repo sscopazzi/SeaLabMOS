@@ -6,7 +6,7 @@ Research and work is ongoing for version two. This GitHub will not have many upd
 
 ## Version One (Completed)
 
-Please see SeaLabCTD_v1_Manual.pdf
+Please see [2024.4.19_SeaLabCTD_v1_Manual.pdf](https://github.com/sscopazzi/SeaLabCTD/blob/main/a_SeaLabCTD_v1/2024.4.19_SeaLabCTD_v1_Manual.pdf)
 
 ### Sensors (see Chapter 3 in Manual)
 [Arduino Uno R3](https://docs.arduino.cc/hardware/uno-rev3/)
