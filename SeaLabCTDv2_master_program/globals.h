@@ -10,6 +10,9 @@
 #include "SdFat.h"    // for SdFat, FsFile
 #include <SPI.h>
 
+#include "pico/stdlib.h"   // pico SDK helpers
+#include "hardware/sync.h" // provides __wfi()
+
 #include "hardware/clocks.h" // used to set clock speed in firmware
 #include "hardware/vreg.h"   // used to set clock speed in firmware
 
@@ -23,9 +26,6 @@ RTC_DS3231 rtc;
 volatile bool rtcAlarmFired = false;
 DateTime nextSample;
 void rtcWakeISR() { rtcAlarmFired = true; }
-
-inline TimeSpan waitOne() { return TimeSpan(0, 0, WAIT_TIME_ONE, 0); }
-inline TimeSpan waitTwo() { return TimeSpan(0, 0, WAIT_TIME_TWO, 0); }
 
 // RTC / SD / filenames owned by the .ino
 extern RTC_DS3231 rtc;
@@ -56,6 +56,7 @@ float pressDF_psi = 999.0;
 
 float brFastTemp  = 999.0; // degC
 float dallasTemp  = 999.0; // degC
+byte dallasAddr[8];
 float thermTemp   = 999.9; // degC
 float pt100Temp   = 999.0; //decC
 
@@ -159,32 +160,9 @@ void serialPrintValues() {
   Serial.println();
 }
 
-static inline DateTime alignToNext(DateTime currentTime, uint16_t sec) {
-  uint32_t t = currentTime.unixtime();
-  return DateTime((t - (t % sec)) + sec);
-}
-
-
 bool bprSampling = false;  // true = sampling active (within :00–:20 window)
 
-// Return hh:00:00 at this hour (if strictly in the future) or next hour.
-static inline DateTime topOfNextHour(const DateTime& now) {
-  // Next hour boundary with seconds = 0
-  uint8_t h = now.hour();
-  uint8_t d = now.day();
-  uint8_t mo = now.month();
-  int16_t y = now.year();
-
-  if (now.minute() > 0 || now.second() > 0) {
-    // advance an hour
-    DateTime adv(now.unixtime() + (3600 - (now.minute()*60 + now.second())));
-    return DateTime(adv.year(), adv.month(), adv.day(), adv.hour(), 0, 0);
-  }
-  // already at hh:00:00? push to next hour so it's strictly > now
-  return DateTime(y, mo, d, (uint8_t)((h + 1) % 24), 0, 0);
-}
-
-// Return the next BPR boundary strictly > now:
+// Return the next BPR boundary
 //   if now < hh:20:00  -> hh:20:00
 //   else               -> (hh+1):00:00
 static inline DateTime nextBprBoundary(const DateTime& now) {
@@ -199,4 +177,93 @@ static inline DateTime nextBprBoundary(const DateTime& now) {
     return DateTime(now.year(), now.month(), now.day(), now.hour(), 0, 0) + TimeSpan(0, 1, 0, 0);
 }
 
+DateTime getNextAlarm(DateTime now, uint8_t waitTimeMinutes) {
+    uint8_t currentMinute = now.minute();
+    uint8_t currentHour = now.hour();
+    uint8_t currentDay = now.day();
+    uint8_t currentMonth = now.month();
+    uint16_t currentYear = now.year();
 
+    // Compute next multiple of waitTimeMinutes after currentMinute
+    uint8_t nextMinute = ((currentMinute / waitTimeMinutes) + 1) * waitTimeMinutes;
+    uint8_t nextHour = currentHour;
+    uint8_t nextDay = currentDay;
+    uint8_t nextMonth = currentMonth;
+    uint16_t nextYear = currentYear;
+
+    if (nextMinute >= 60) {
+        nextMinute = nextMinute % 60;
+        nextHour += 1;
+        if (nextHour >= 24) {
+            nextHour = 0;
+            nextDay += 1;
+            // Very basic day/month rollover (not accounting for months < 31)
+            // Use RTC library DateTime add functions for full correctness
+        }
+    }
+
+    return DateTime(nextYear, nextMonth, nextDay, nextHour, nextMinute, 0);
+}
+
+inline void setRtcCompileTimeUTC() {
+    if (serialDisplay) Serial.println("RTC lost power, let's set the time!");
+
+    // Pull compile-time date/time
+    const char* compileDate = __DATE__;  // e.g., "Aug 31 2025"
+    const char* compileTime = __TIME__;  // e.g., "18:23:45"
+
+    // Convert month string to number
+    const char* months = "JanFebMarAprMayJunJulAugSepOctNovDec";
+    char monthStr[4];
+    int month, day, year, hour, minute, second;
+
+    sscanf(compileDate, "%3s %d %d", monthStr, &day, &year);
+    month = (strstr(months, monthStr) - months)/3 + 1;
+
+    sscanf(compileTime, "%d:%d:%d", &hour, &minute, &second);
+
+    // Apply timeZone offset (local → UTC)
+    hour -= timeZone;
+
+    // Array of days per month (non-leap year)
+    int daysInMonth[] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
+
+    // Adjust for leap year
+    auto isLeap = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
+    if (isLeap) daysInMonth[1] = 29;
+
+    // Robust positive/negative hour adjustment
+    while (hour < 0) {
+        hour += 24;
+        day -= 1;
+        if (day < 1) {
+            month -= 1;
+            if (month < 1) {
+                month = 12;
+                year -= 1;
+                isLeap = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
+                daysInMonth[1] = isLeap ? 29 : 28;
+            }
+            day = daysInMonth[month - 1];
+        }
+    }
+
+    while (hour >= 24) {
+        hour -= 24;
+        day += 1;
+        if (day > daysInMonth[month - 1]) {
+            day = 1;
+            month += 1;
+            if (month > 12) {
+                month = 1;
+                year += 1;
+                isLeap = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
+                daysInMonth[1] = isLeap ? 29 : 28;
+            }
+        }
+    }
+
+    rtc.adjust(DateTime(year, month, day, hour, minute, second));
+
+    if (serialDisplay) Serial.println("RTC set in UTC!");
+}

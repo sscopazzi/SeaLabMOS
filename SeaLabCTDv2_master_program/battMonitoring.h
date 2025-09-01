@@ -44,6 +44,7 @@ inline void setupBatteryMonitoring(BatteryLEDMode mode) {
 }
 
 void readBatteryVoltage() {
+  delay(5); // stability
   float v = analogRead(BATTV_PIN);
   v /= 4095.0;     // Convert raw ADC to 0–3.3 V
   v *= 3.3;        // Actual voltage at analog pin
