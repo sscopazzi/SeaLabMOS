@@ -100,7 +100,7 @@ void brPressureSetup() {
       if (serialDisplay) Serial.println("bar100 not found after retries.");
     }
   }
-  delay(200);
+  delay(200); // delay moved from .ino here
 }
 
 void brPressureSample() {
