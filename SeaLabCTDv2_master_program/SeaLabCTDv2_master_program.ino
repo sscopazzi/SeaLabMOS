@@ -1,76 +1,85 @@
-  // RP2040 NEEDS THIS TO BE IN ARDUINO IDE FOR BOARDS
-  // https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
-  // TEMP LOGGER SWITCH COLORS
-  #define GREEN 0
-  #define BLUE 1
-  #define ORANGE 2
-  #define WHITE 3
+// RP2040 NEEDS THIS TO BE IN ARDUINO IDE FOR BOARDS
+// https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
+// TEMP LOGGER SWITCH COLORS
+#define GREEN   0
+#define BLUE    1
+#define ORANGE  2
+#define WHITE   3
 
-  #define NALGENE 4
-  #define STEEL 5
-  #define TWOIN 6
-  #define BPR 7
-  #define SYSTEM_NAME BLUE
-  // PICK FROM THE ABOVE, CURRENTLY ONLY USED FOR BATTV CORRECTION FACTOR AND THERMISTOR RESISTOR VALUES
-  // Could be used to auto select sensors based on system name, if desired
+// OTHER SYSTEM VBAT NUMBERS
+#define NALGENE 4
+#define STEEL   5
+#define TWOIN   6
+#define BPR     7
+#define SYSTEM_NAME BLUE
+// PICK FROM THE ABOVE, CURRENTLY ONLY USED FOR BATTV CORRECTION FACTOR AND THERMISTOR RESISTOR VALUES
+// FUTURE WORK - auto select sensors based on system name
 
-  int deviceMode = 2;         // 0 = fast as possible, 1 uses WAIT_TIME_ONE, 2 uses WAIT_TIME_TWO, 3 is charge mode, 4 is BPR, samples at 4Hz
-  bool serialDisplay = false;  // Set to false to disable all Serial prints
-  bool displayBool = false;   // Adafruit Feather OLED Display
-  int timeZone = -10;         // time zone of commputer time, as program pulls time from computer to set RTC, but must convert
+int  deviceMode      = 2;      // 0 = fast as possible, 1 uses WAIT_TIME_ONE, 2 uses WAIT_TIME_TWO, 3 is charge mode, 4 is BPR, samples at 4Hz
+bool serialDisplay   = false;  // Set to false to disable all Serial prints
+bool displayBool     = false;  // Adafruit Feather OLED Display
+int  timeZone        = -10;    // time zone of commputer time, as program pulls time from computer to set RTC, but must convert
 
-  // SENSORS USED BY SYSTEM ######
-  bool salinityBool = false;     // Atlas Scientific Salinity Sensor
-  bool dallasTempBool = true;  // Dallas Temperature sensor
-  bool thermTempBool = true;   // Adafruit Thermistor
-  bool pt100Bool = false;       // Adafruit PT100
-  bool brFastTempBool = false;   // Blue Robotics Fast Temperature
-  bool pressDFBool = false;     // DF Robot analog pressure sensor
-  bool bar02Bool = false;       // Blue Robotics Bar02
-  bool bar30Bool = false;       // Blue Robotics Bar30
-  bool bar100Bool = false;       // Blue Robotics Bar100
-  bool beaconBool = false;      // Surface float beacon
+// ###### SENSORS USED BY SYSTEM ######
+bool salinityBool     = false; // Atlas Scientific Salinity Sensor
 
-  #define WAIT_TIME_ONE 1   // 1 min (other: 5 min, 20 min, 30 min)
-  #define WAIT_TIME_TWO 10  // 10 min (other: 1 hr, 12 hr, 24 hr)
-  #define WAIT_TIME_BPR 20  // First 20 min of the hour (for Bottom Pressure Recorder)
+// ###### TEMPERATURE ######
+bool dallasTempBool   = true;  // Dallas Temperature sensor
+bool thermTempBool    = true;  // Adafruit Thermistor
+bool pt100Bool        = false; // Adafruit PT100
+bool brFastTempBool   = false; // Blue Robotics Fast Temperature
 
-  // GPIO PIN SETTINGS ######
-  #define RTC_INTERRUPT_PIN 25   // RTC interrupt pin
-  #define BEACON_PIN 11          // enable 3.3V->12V board to power LED surface beacon
-  #define SALINITY_ENABLE_PIN 4  // enable pin for salinity board
+// ###### PRESSURE ######
+bool pressDFBool  = false; // DF Robot analog pressure sensor
+bool bar02Bool    = false; // Blue Robotics Bar02
+bool bar30Bool    = false; // Blue Robotics Bar30
+bool bar100Bool   = false; // Blue Robotics Bar100
 
-  // ANALOG PINS
-  #define THERMISTOR_PIN A3  // Pin used for thermistor
-  #define BATTV_PIN A2       // Pin used for battery voltage monitoring
+// ###### UTILITY ######
+bool beaconBool = false; // Surface float LED beacon
 
-  // OTHER VALUES
-  #define SYSTEM_BAUD 115200  // Serial with computer
-  #define SALINITY_BAUD 9600  // baud rate of EZO circuit, default is 9600
-  #define WATER_DENSITY 1029  // 1029 is default seawater for Blue Robotics sensors
+// ###### OTHER SENSORS ######
+bool lightBool = false; // Adafruit AS7262 6-channel Visible Light Sensor
 
-  // SEALABCTD UTILILITY HEADER FILES
-  #include "globals.h"         // self made file
-  #include "display.h"         // Adafruit_SH110x and Adafruit_GFX
-  #include "battMonitoring.h"  // Battery monitoring functions
-  #include "ledDisplay.h"      // Functions for flashing the NeoPixel and orange beacon for surface assets
+#define WAIT_TIME_ONE 1   // 1 min (other: 5 min, 20 min, 30 min)
+#define WAIT_TIME_TWO 10  // 10 min (other: 1 hr, 12 hr, 24 hr)
+#define WAIT_TIME_BPR 20  // First 20 min of the hour (for Bottom Pressure Recorder)
 
-  // SEALABCTD SENSOR HEADER FILES
-  #include "blueRoboticsPressure.h"  // Blue Robotics' pressure sensors
-  #include "blueRoboticsFastTemp.h"  // Blue Robotics' Fast Temperature sensor
-  #include "salinAtlas.h"            // Atlas Scientific Conductivity Sensor
-  #include "dallasTemp.h"            // DS18B20 "dallas" temperature sensors, OneWire library by Jim Studt, Tom Pollard
-  #include "therm.h"                 // Adafruit 10kΩ NTC thermistor
-  #include "pt100.h"                 // Adafruit PT100
-  #include "pressDF.h"               // DF Robot Analog Pressure Sensor (required 3.3V->5V buck)
-  // ############################################################################################################
-  // ==================
+// GPIO PIN SETTINGS ######
+#define RTC_INTERRUPT_PIN   25 // RTC interrupt pin
+#define BEACON_PIN          11 // enable 3.3V->12V board to power LED surface beacon
+#define SALINITY_ENABLE_PIN 4  // enable pin for salinity board
 
-  // SETUP
+// ANALOG PINS
+#define THERMISTOR_PIN  A3  // Pin used for thermistor
+#define BATTV_PIN       A2  // Pin used for battery voltage monitoring
+
+// OTHER VALUES
+#define SYSTEM_BAUD   115200  // Serial with computer
+#define SALINITY_BAUD 9600    // baud rate of EZO circuit, default is 9600
+#define WATER_DENSITY 1029    // 1029 is default seawater for Blue Robotics sensors
+
+// SEALABCTD UTILILITY HEADER FILES
+#include "globals.h"         // self made file
+#include "display.h"         // Adafruit_SH110x and Adafruit_GFX
+#include "battMonitoring.h"  // Battery monitoring functions
+#include "ledDisplay.h"      // Functions for flashing the NeoPixel and orange beacon for surface assets
+
+// SEALABCTD SENSOR HEADER FILES
+#include "blueRoboticsPressure.h"  // Blue Robotics' pressure sensors
+#include "blueRoboticsFastTemp.h"  // Blue Robotics' Fast Temperature sensor
+#include "salinAtlas.h"            // Atlas Scientific Conductivity Sensor
+#include "dallasTemp.h"            // DS18B20 "dallas" temperature sensors, OneWire library by Jim Studt, Tom Pollard
+#include "therm.h"                 // Adafruit 10kΩ NTC thermistor
+#include "pt100.h"                 // Adafruit PT100
+#include "pressDF.h"               // DF Robot Analog Pressure Sensor (required 3.3V->5V buck)
+#include "light.h"                 // 6-channel light sensor
+// ############################################################################################################
+
   void setup() {
     // MUST CHANGE CLOCK SPEED BEFORE DOING ANYTHING ELSE
     // Needs more research and testing as sometimes it breaks the timing of certain sensors
-    // If having issues sampling with sensors using master code but single sensor code works, comment out this part
+    // If having issues sampling with sensors using master code but single sensor code works, use default clock speed 133MHz
     switch (deviceMode) {
       case 0:                             // fast sampling
         set_sys_clock_khz(133000, true);  // safer default
@@ -78,8 +87,8 @@
         yield();
         // set_sys_clock_khz(200000, true); // overclocking, untested
         break;
-      case 1:  // 1-min interval
-      case 2:  // 10-min interval
+      case 1:  // WAIT TIME 1
+      case 2:  // WAIT TIME 2
       case 4:  // BPR
         set_sys_clock_khz(50000, true);
         delay(5);
@@ -139,9 +148,18 @@
         pixel.show();
     }
 
-    setupDallasTemp();
+    if (dallasTempBool) { setupDallasTemp();  }
+    if (dallasTempBool && displayBool) {
+      display.println("dallasTemp init");
+      display.display();
+    }
 
-    // SETUP PRESSURE SENSOR
+    if (lightBool)  { setupLight();       }
+    if (lightBool && displayBool) {
+      display.println("6-ch light init");
+      display.display();
+    }
+
     if (bar02Bool || bar30Bool || bar100Bool) {
       brPressureSetup();
       if (displayBool) {
@@ -149,9 +167,7 @@
         display.display();
       }
     }
-    delay(200);
 
-    // SETUP FAST TEMP
     if (brFastTempBool) {
       brFastTempSetup();
       if (displayBool) {
@@ -161,14 +177,12 @@
     }
     delay(200);
 
-    if (dallasTempBool && displayBool) {
-      display.println("dallasTemp init");
-      display.display();
-    }
+    // thermTemp does not have a setup function
     if (thermTempBool && displayBool) {
       display.println("thermTemp init");
       display.display();
     }
+
     if (pt100Bool) { pt100Setup(); }
     if (pt100Bool && displayBool) {
       display.println("PT100 init");
@@ -177,7 +191,6 @@
 
     delay(200);
 
-    // RTC init
     if (!rtc.begin()) {
       if (serialDisplay) Serial.println("Could not find RTC");
       Serial.flush();

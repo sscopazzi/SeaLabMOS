@@ -65,6 +65,7 @@ float sal  = 999.0;
 float tds  = 999.0;
 float grav = 999.0;
 
+float lt450, lt500, lt550, lt570, lt600, lt650; // 6-channel light
 
 // UTILITY
 int count = 0;
@@ -156,6 +157,15 @@ void serialPrintValues() {
   if (dallasTempBool) { Serial.print(" dallasTemp: ");  Serial.print(dallasTemp);  }
   if (pressDFBool)    { Serial.print(" pressDF_ft: ");  Serial.print(pressDF_ft);  }
   if (pt100Bool)      { Serial.print(" PT100: ");       Serial.print(pt100Temp);   }
+
+  if (lightBool) {
+    Serial.print(" 450nm: "); Serial.print(lt450);
+    Serial.print(" 500nm: "); Serial.print(lt500);
+    Serial.print(" 550nm: "); Serial.print(lt550);
+    Serial.print(" 570nm: "); Serial.print(lt570);
+    Serial.print(" 600nm: "); Serial.print(lt600);
+    Serial.print(" 650nm: "); Serial.print(lt650);
+  }
 
   Serial.println();
 }
