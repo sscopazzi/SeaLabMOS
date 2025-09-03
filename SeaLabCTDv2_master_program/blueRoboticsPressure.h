@@ -100,6 +100,7 @@ void brPressureSetup() {
       if (serialDisplay) Serial.println("bar100 not found after retries.");
     }
   }
+  delay(200);
 }
 
 void brPressureSample() {
