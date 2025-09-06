@@ -11,9 +11,9 @@
 // BATTERY VOLTAGE LED MEANING
 // 4.0+    GREEN      — Full
 // 3.8-3.6 CYAN       — Mostly full
-// 3.6-3.4 YELLOW     — Medium
-// 3.4-3.3 PURPLE     — Low
-// <3.3    RED        — Critical *FLASHES*
+// 3.6-3.5 YELLOW     — Medium
+// 3.5-3.4 PURPLE     — Low
+// <3.4    RED        — Critical *FLASHES*
 //  ***************************************************************/
 
 #include <Adafruit_NeoPixel.h>
@@ -24,8 +24,8 @@
 Adafruit_NeoPixel pixel(1, LED, NEO_GRB + NEO_KHZ800);
 
 // Voltage thresholds
-const float battV_max = 4.05;
-const float battV_min = 3.30;
+const float battV_max = 4.2;
+const float battV_min = 3.4;
 
 // Modes
 enum BatteryLEDMode { CHARGE_MODE, SAMPLE_MODE };
@@ -99,9 +99,9 @@ void updateBatteryLED(float battV) {
         color = pixel.Color(0, 255, 255);     // Cyan — Mostly full
     } else if (battV >= 3.6) {
         color = pixel.Color(255, 255, 0);     // Yellow — Medium
-    } else if (battV >= 3.40) {
+    } else if (battV >= 3.50) {
         color = pixel.Color(180, 0, 255);     // Purple — Low
-    } else if (battV >= 3.30) {
+    } else if (battV >= 3.40) {
         color = pixel.Color(255, 0, 0);       // Red — Critical (no blink)
     } else {
         // RED — Dangerously Low, BLINKING
