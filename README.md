@@ -1,8 +1,8 @@
-# SeaLabCTD
-Everything you need to know to make an Arduino-based CTD from scratch with no experience and basic tools.
+# SeaLabMOS
+Modular oceanographic systems using consumer-off-the-shelf parts with no prior experience and basic tools.
 
 ## Version Two (Work Ongoing)
-Research is ongoing for version two. It will be presented at MTS Great Lakes in 2025. If curious please check out [my website's page](https://www.sophiescopazzi.com/projects/sealabctd) about it for some other words.
+Research is ongoing for version two. It will be presented at MTS Great Lakes in 2025. If curious please check out [my website's page](https://www.sophiescopazzi.com/projects/sealabmos) about it for some other words.
 
 ### Base Datalogger Hardware
 
@@ -32,7 +32,7 @@ Research is ongoing for version two. It will be presented at MTS Great Lakes in 
 
 ## Version One (Complete)
 
-This is now old. Please see SeaLabCTDv2 above. See [2024.4.19_SeaLabCTD_v1_Manual.pdf](https://github.com/sscopazzi/SeaLabCTD/blob/main/a_SeaLabCTD_v1/2024.4.19_SeaLabCTD_v1_Manual.pdf) for everything about the first version.
+This is now old. Please see SeaLabMOS above. See [2024.4.19_SeaLabCTD_v1_Manual.pdf](https://github.com/sscopazzi/SeaLabCTD/blob/main/a_SeaLabCTD_v1/2024.4.19_SeaLabCTD_v1_Manual.pdf) for everything about the first version.
 
 ### Hardware (Chapter 3 in Manual)
 [Arduino Uno R3](https://docs.arduino.cc/hardware/uno-rev3/)
