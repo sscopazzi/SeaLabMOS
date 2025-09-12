@@ -51,7 +51,9 @@ void readBatteryVoltage() {
   v *= 2.0;        // Undo the voltage divider (assumes 1:1 divider)
 
   // Apply system-specific correction factor
-  // Measure battery with multi-meter while reading from serial
+  // Measure battery voltage with multi-meter while reading from serial
+  // adjust correction factor until datalogger value is multi-meter value
+  // this is a way to correct for now 100% knowing the exact resistor values
   #if SYSTEM_NAME == GREEN
     v *= 1.053;
   #elif SYSTEM_NAME == BLUE
@@ -68,7 +70,10 @@ void readBatteryVoltage() {
     v *= 1.038;
   #elif SYSTEM_NAME == BPR
     v *= 1.050;
+  #elif SYSTEM_NAME == PRESS_ONLY
+    v *= 1.000; // DO ONCE MADE
   #else
+    // warn in output dialog if unrecongized name
     #warning "Unknown SYSTEM_NAME; using default correction factor of 1.0"
     v *= 1.0;
   #endif
