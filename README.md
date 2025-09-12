@@ -1,8 +1,7 @@
 # SeaLabMOS
 Modular oceanographic systems using consumer-off-the-shelf parts with no prior experience and basic tools.
 
-## Version Two (Work Ongoing)
-Research is ongoing for version two. It will be presented at MTS Great Lakes in 2025. If curious please check out [my website's page](https://www.sophiescopazzi.com/projects/sealabmos) about it for some other words.
+ This work will be presented at MTS Great Lakes in 2025. If curious please check out [my website's page](https://www.sophiescopazzi.com/projects/sealabmos) about it for some other words.
 
 ### Base Datalogger Hardware
 
