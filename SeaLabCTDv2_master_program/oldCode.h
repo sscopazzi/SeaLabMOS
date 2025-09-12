@@ -1,3 +1,38 @@
+// old data file saving
+// void writeDataRow() {
+//   myFile = SD.open(timestamp_filename + ".csv", FILE_WRITE);
+
+//   // IN EVERY FILE
+//   myFile.print(currentTime.timestamp(DateTime::TIMESTAMP_FULL)); myFile.print(',');
+//   myFile.print(deviceMode);                                     myFile.print(',');
+//   myFile.print(battV,           decimalPlaces); myFile.print(',');
+
+//   // SALINITY
+//   myFile.print(ec,              decimalPlaces); myFile.print(',');
+//   myFile.print(sal,             decimalPlaces); myFile.print(',');
+//   myFile.print(tds,             decimalPlaces); myFile.print(',');
+
+//   // TEMPERATURE SENSORS
+//   myFile.print(dallasTemp,      decimalPlaces); myFile.print(',');
+//   myFile.print(thermTemp,       decimalPlaces); myFile.print(',');
+//   myFile.print(pt100Temp,       decimalPlaces); myFile.print(',');
+//   myFile.print(brFastTemp,      decimalPlaces); myFile.print(',');
+
+//   // BLUE ROBOTICS PRESSURE, whichever sensor is selected populates these fields
+//   myFile.print(brPressure,      decimalPlaces); myFile.print(',');
+//   myFile.print(brTemperature,   decimalPlaces); myFile.print(',');
+//   myFile.print(brDepth,         decimalPlaces); myFile.print(',');
+
+//   // LIGHT SENSOR
+//   float lt450, lt500, lt550, lt570, lt600, lt650; // 6-channel light
+
+//   myFile.println();
+//   myFile.close();
+// }
+
+
+
+
 
 // OLD USING IF ELSE STATEMENTS
 // void loop() {

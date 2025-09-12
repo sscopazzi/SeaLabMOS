@@ -1,5 +1,15 @@
 // RP2040 NEEDS THIS TO BE IN ARDUINO IDE FOR BOARDS
 // https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
+
+// Coming features...
+// 1. GNSS sensor
+// 2. Light sensor
+// 3. Fix/troubleshoot salinity sensor sometimes buffer overrun issues
+// 4. Salinity temp comp RT command sometimes works, related to #3
+// 5. Auto-select sensors based on system type (CTD, BPR, temp logger, etc)??
+
+// THESE ARE MY SYSTEM NAMES, YOUR NAMES WILL BE DIFFERENCE 
+
 // TEMP LOGGER SWITCH COLORS
 #define GREEN   0
 #define BLUE    1
@@ -7,13 +17,15 @@
 #define WHITE   3
 
 // OTHER SYSTEM VBAT NUMBERS
-#define NALGENE 4
-#define STEEL   5
-#define TWOIN   6
-#define BPR     7
-#define SYSTEM_NAME BLUE
-// PICK FROM THE ABOVE, CURRENTLY ONLY USED FOR BATTV CORRECTION FACTOR AND THERMISTOR RESISTOR VALUES
-// FUTURE WORK - auto select sensors based on system name
+// CURRENTLY ONLY USED FOR VBAT CORRECTION FACTOR AND THERMISTOR RESISTOR VALUES
+#define NALGENE 4   // surface float
+#define STEEL   5   // extra-deep 
+#define TWOIN   6   // two-inch PVC 
+#define BPR     7   // pressure only sensor, larger battery, records first 20min of every hr by default (can use 3 in a triangle for calculating wave height/direction??)
+#define PRESS_ONLY = 8 // 1.5" pvc with small bat
+//#############################  
+#define SYSTEM_NAME WHITE  
+//#############################
 
 int  deviceMode      = 2;      // 0 = fast as possible, 1 uses WAIT_TIME_ONE, 2 uses WAIT_TIME_TWO, 3 is charge mode, 4 is BPR, samples at 4Hz
 bool serialDisplay   = false;  // Set to false to disable all Serial prints
@@ -41,8 +53,8 @@ bool beaconBool = false; // Surface float LED beacon
 // ###### OTHER SENSORS ######
 bool lightBool = false; // Adafruit AS7262 6-channel Visible Light Sensor
 
-#define WAIT_TIME_ONE 1   // 1 min (other: 5 min, 20 min, 30 min)
-#define WAIT_TIME_TWO 10  // 10 min (other: 1 hr, 12 hr, 24 hr)
+#define WAIT_TIME_ONE 1   // 1 min (other: 5 min, 20 min, 30 min, etc.)
+#define WAIT_TIME_TWO 10  // 10 min (other: 1 hr, 12 hr, 24 hr, etc.)
 #define WAIT_TIME_BPR 20  // First 20 min of the hour (for Bottom Pressure Recorder)
 
 // GPIO PIN SETTINGS ######
@@ -51,8 +63,8 @@ bool lightBool = false; // Adafruit AS7262 6-channel Visible Light Sensor
 #define SALINITY_ENABLE_PIN 4  // enable pin for salinity board
 
 // ANALOG PINS
-#define THERMISTOR_PIN  A3  // Pin used for thermistor
-#define BATTV_PIN       A2  // Pin used for battery voltage monitoring
+#define THERMISTOR_PIN  A3  // Analog pin used for thermistor
+#define BATTV_PIN       A2  // Analog pin used for battery voltage monitoring
 
 // OTHER VALUES
 #define SYSTEM_BAUD   115200  // Serial with computer
@@ -208,7 +220,7 @@ bool lightBool = false; // Adafruit AS7262 6-channel Visible Light Sensor
     // When time needs to be re-set on a previously configured device, the
     // following line sets the RTC to the date & time this sketch was compiled
     // rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); // time of computer, no UTC
-    // setRtcCompileTimeUTC();
+    setRtcCompileTimeUTC();
 
     rtc.clearAlarm(1);
     delay(2);  // tiny debounce delay for some DS3231 boards, not 100% sure if needed
@@ -292,10 +304,12 @@ bool lightBool = false; // Adafruit AS7262 6-channel Visible Light Sensor
     if (deviceMode == 0) {
       // full timestamp for fast mode
       timestamp_filename = currentTime.timestamp(DateTime::TIMESTAMP_FULL);
-      timestamp_filename.replace(":", "-");                   // Replace colons (not valid in filenames)
-      if (serialDisplay) Serial.println(timestamp_filename);  // mode 0 has all time valyes YYYY-MM-DD hh-mm-ss
-
+      timestamp_filename.replace(":", "-");                      // Replace colons (not valid in filenames)
+      if (serialDisplay) { Serial.println(timestamp_filename); }  // mode 0 has all time valyes YYYY-MM-DD hh-mm-ss
       myFile = SD.open(timestamp_filename + ".csv", FILE_WRITE);
+      myFile.println(header);
+      myFile.close();
+
     } else if (deviceMode == 1 || deviceMode == 2 || deviceMode == 4) {
       updateFilenameAndHeader();  // only create a day file for longer sample modes
     }
@@ -308,8 +322,9 @@ bool lightBool = false; // Adafruit AS7262 6-channel Visible Light Sensor
         delay(100);
         Serial1.print("L,1\r");  // Light on so we know it's doing stuff
         delay(100);              // Found 100ms works. Probably can be shorter
-        Serial1.print("C,0\r");  // Continuous sample off cuz we want to send RT for in-situ temp compensation
+        Serial1.print("C,1\r");  // Continuous sample on, we will send T in-situ temp compensation
         delay(100);              // Found 100ms works. Probably can be shorter
+        // Serial1.print("OK,0\r");  // remove response codes
         deviceModeZeroInit = true;
       }
     }
@@ -317,7 +332,6 @@ bool lightBool = false; // Adafruit AS7262 6-channel Visible Light Sensor
     if (beaconBool) { tickBeacon(); }
 
     currentTime = rtc.now();
-
     if (bar02Bool || bar30Bool || bar100Bool) { brPressureSample(); }  // the || means or because there will only ever be one type connected at a time
     if (thermTempBool) { thermTemp = getThermTemp(); }
     if (pt100Bool) { pt100Temp = getPT100Temp(); }
@@ -326,7 +340,7 @@ bool lightBool = false; // Adafruit AS7262 6-channel Visible Light Sensor
     if (brFastTempBool) { brFastTempSample(); }  // Immeditely before salinity as salinity uses temperature
 
     uint32_t saltTime = millis();
-    if ((uint32_t)(saltTime - lastSaltMs) >= 200UL) {
+    if ((uint32_t)(saltTime - lastSaltMs) >= 1000UL) {
       if (salinityBool && brFastTempBool) { salinLoopWithoutPC(brFastTemp); }  // must be after temperature
       else if (salinityBool && dallasTempBool) { salinLoopWithoutPC(dallasTemp);  }  // must be after temperature
       lastSaltMs = saltTime;
@@ -337,12 +351,19 @@ bool lightBool = false; // Adafruit AS7262 6-channel Visible Light Sensor
     if (serialDisplay) { serialPrintValues(); }
     if (displayBool) { displayMode0(); }
 
-    delay(20);  // not delay does not allow Serial to connect to IDE, and this doen't majorly effect sample speed
+    // OLED update, only if enough time has passed
+    // if (displayBool && (millis() - lastOledMs >= oledInterval)) {
+    //     lastOledMs = millis();
+    //     displayMode0();
+    // }
+
+    delay(50);  // not delay does not allow Serial to connect to IDE, and this  doesn't majorly effect sample speed
     yield();
   }
 
   void runMode1and2() {
     // only call this function in Mode 1, 2, or 4
+    // we want a new file each day,
     updateFilenameAndHeader();  // only create a new file each day multi-day sample modes
 
     if (salinityBool){
@@ -432,24 +453,7 @@ bool lightBool = false; // Adafruit AS7262 6-channel Visible Light Sensor
         if (bar02Bool || bar30Bool || bar100Bool) { brPressureSample(); }  // Only have one sensor in this platform
         readBatteryVoltage();
 
-        // Break my self-made rules and make a smaller header with only the one sensor
-        // To save space and power due to logging at ~5hz
-        // String bprHeader = "time,deviceMode,battV,brPressure,brTemperature,brDepth"
-        myFile = SD.open(timestamp_filename + ".csv", FILE_WRITE);
-
-        myFile.print(currentTime.timestamp(DateTime::TIMESTAMP_FULL));
-        myFile.print(',');
-        myFile.print(deviceMode);
-        myFile.print(',');
-        myFile.print(battV, decimalPlaces);
-        myFile.print(',');
-        myFile.print(brPressure, decimalPlaces);
-        myFile.print(',');
-        myFile.print(brTemperature, decimalPlaces);
-        myFile.print(',');
-        myFile.print(brDepth, decimalPlaces);
-        myFile.println();
-        myFile.close();
+        writeDataRow();
 
         if (serialDisplay) {
           Serial.print("battV: ");
@@ -459,9 +463,10 @@ bool lightBool = false; // Adafruit AS7262 6-channel Visible Light Sensor
           Serial.print(" brPress: ");
           Serial.println(brPressure);
         }
+
       }
     } else {
-      // Outside sampling window → slow CPU
+      // Outside sampling window
       while (!rtcAlarmFired) {
         __wfi();  // CPU halts until RTC interrupt triggers
       }

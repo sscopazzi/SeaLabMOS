@@ -21,6 +21,7 @@ inline void salinSetup() {
   digitalWrite(SALINITY_ENABLE_PIN, LOW); // turn off at system start
 }
 
+
 inline void print_EC_data(void) {  //this function will pars the string
 
   char sensorstring_array[30];  //we make a char array
@@ -81,23 +82,21 @@ void salinLoopWithoutPC(float tempCForComp) {
   /* APPLY TEMPERATURE COMPENSATION FROM PROVIDED VALUE
      (from any sensor or constant)
      COMMAND SYNTAX FROM ATLAS SCIENTIFIC MANUAL:
-     RT,n <cr> | n = any value; floating point or int */
+     T,n <cr> | n = any value; floating point or int */ // was RT
 
   // Send temperature compensation + read command
-  Serial1.print("RT," + String(tempCForComp, 2) + "\r");
-  delay(20);
+  // Serial1.print("T," + String(tempCForComp, 2) + "\r"); 
+  // delay(50);
 
-  sensorstring.remove(0);  // Clear previous data
-
-  if (Serial1.available()) {
-    sensorstring = Serial1.readStringUntil(13);  // Read until carriage return
-
-    if (!isdigit(sensorstring[0])) {
-      Serial.println(sensorstring);  // Debug info if not numeric
-    } else {
-      print_EC_data();  // Parse and print numeric EC result
+  sensorstring.remove(0);                        // Removes all characters
+  if (Serial1.available()) {                     //if a string from the Atlas Scientific product has been received in its entirety
+    sensorstring = Serial1.readStringUntil(13);  //read the string until we see a <CR>
+    if (isdigit(sensorstring[0]) == false) {     //if the first character in the string is a digit
+      Serial.println(sensorstring);              //send that string to the PC's serial monitor
+    } else                                       //if the first character in the string is NOT a digit
+    {
+      print_EC_data();  //then call this function
     }
-
-    sensorstring = "";  // Clear buffer for next loop
+    sensorstring = "";  //clear the string
   }
 }

@@ -16,10 +16,11 @@
 #include "hardware/clocks.h" // used to set clock speed in firmware
 #include "hardware/vreg.h"   // used to set clock speed in firmware
 
-// IF YOU CHANGE THIS HEADER YOU MUST ALSO CHANGE HOW THE DATA IS WRITTEN TO THE SD CARD
-// CSV header / filename
-String header = "time,deviceMode,battV,ec,sal,tds,dallasTemp,thermTemp,pt100Temp,brFastTemp,brPressure,brTemperature,brDepth";
-String bprHeader = "time,deviceMode,battV,brPressure,brTemperature,brDepth";
+// #define SERIAL_BUFFER_SIZE 1024   
+// unsigned long lastOledMs = 0;       // Tracks last OLED update time
+// const int oledInterval = 1000;       // Interval between display updates
+
+String header = "time,deviceMode,battV,ec,sal,tds,dallasTemp,thermTemp,pt100Temp,brFastTemp,lt450,lt500,lt550,lt570,lt600,lt650,brPressure,brTemperature,brDepth";
 String timestamp_filename = "";   // YYYY-MM-DD hh-mm-ss in Mode 0 and YYYY-MM-DD in Modes 1 and 2
 
 RTC_DS3231 rtc;
@@ -36,7 +37,7 @@ extern String     timestamp_filename;
 extern bool serialDisplay;
 
 // SD
-#define SD_CS_PIN 23
+#define SD_CS_PIN 23 // this doesn't change so it's hidden here
 SdFat SD;
 FsFile myFile;
 SdSpiConfig config(SD_CS_PIN, DEDICATED_SPI, SD_SCK_MHZ(16), &SPI1);
@@ -108,11 +109,7 @@ static inline void updateFilenameAndHeader() {
   myFile = SD.open(timestamp_filename + ".csv", FILE_WRITE);
   if (myFile) {
     if (myFile.size() == 0) {
-      if (deviceMode == 4) {
-        myFile.println(bprHeader);
-      } else {
         myFile.println(header);
-      }
     }
     myFile.close();
   } else {
@@ -120,34 +117,73 @@ static inline void updateFilenameAndHeader() {
   }
 }
 
+void writeHeader(){
+
+}
+
 void writeDataRow() {
   myFile = SD.open(timestamp_filename + ".csv", FILE_WRITE);
 
+  // IN EVERY FILE
   myFile.print(currentTime.timestamp(DateTime::TIMESTAMP_FULL)); myFile.print(',');
   myFile.print(deviceMode);                                     myFile.print(',');
-
   myFile.print(battV,           decimalPlaces); myFile.print(',');
-  myFile.print(ec,              decimalPlaces); myFile.print(',');
-  myFile.print(sal,             decimalPlaces); myFile.print(',');
-  myFile.print(tds,             decimalPlaces); myFile.print(',');
-  myFile.print(dallasTemp,      decimalPlaces); myFile.print(',');
-  myFile.print(thermTemp,       decimalPlaces); myFile.print(',');
-  myFile.print(pt100Temp,       decimalPlaces); myFile.print(',');
-  myFile.print(brFastTemp,      decimalPlaces); myFile.print(',');
-  myFile.print(brPressure,      decimalPlaces); myFile.print(',');
-  myFile.print(brTemperature,   decimalPlaces); myFile.print(',');
-  myFile.print(brDepth,         decimalPlaces); myFile.println();
 
+  // ###### SALINITY ######
+  if (salinityBool) {
+    myFile.print(ec, decimalPlaces); myFile.print(',');
+    myFile.print(sal, decimalPlaces); myFile.print(',');
+    myFile.print(tds, decimalPlaces); myFile.print(',');
+  } else {
+    myFile.print(",,,"); // preserve header alignment
+  }
+
+  // ###### TEMPERATURE SENSORS ######
+  if (dallasTempBool)   myFile.print(dallasTemp, decimalPlaces);
+  myFile.print(',');
+  
+  if (thermTempBool)    myFile.print(thermTemp, decimalPlaces);
+  myFile.print(',');
+  
+  if (pt100Bool)        myFile.print(pt100Temp, decimalPlaces);
+  myFile.print(',');
+  
+  if (brFastTempBool)   myFile.print(brFastTemp, decimalPlaces);
+  myFile.print(',');
+
+  // ###### LIGHT SENSOR ######
+  if (lightBool) {
+    myFile.print(lt450, decimalPlaces); myFile.print(',');
+    myFile.print(lt500, decimalPlaces); myFile.print(',');
+    myFile.print(lt550, decimalPlaces); myFile.print(',');
+    myFile.print(lt570, decimalPlaces); myFile.print(',');
+    myFile.print(lt600, decimalPlaces); myFile.print(',');
+    myFile.print(lt650, decimalPlaces); myFile.print(',');
+  } else {
+    myFile.print(",,,,,"); // 6 placeholders, preserve header alignment
+  }
+
+    // ###### BLUE ROBOTICS PRESSURE ######
+  if (bar02Bool || bar30Bool || bar100Bool) {
+    myFile.print(brPressure, decimalPlaces);    myFile.print(',');
+    myFile.print(brTemperature, decimalPlaces); myFile.print(',');
+    myFile.print(brDepth, decimalPlaces);       myFile.print(',');
+  } else {
+    myFile.print(",,,"); // preserve alignment
+  }
+
+  myFile.println();
   myFile.close();
 }
 
-// Serial dump of key values
+
 void serialPrintValues() {
   Serial.print("Time: ");
   Serial.print(currentTime.timestamp(DateTime::TIMESTAMP_FULL));
   Serial.print(" battV: "); Serial.print(battV);
 
   if (brFastTempBool) { Serial.print(" brFastTemp: "); Serial.print(brFastTemp); }
+
   if (bar02Bool || bar30Bool || bar100Bool) { 
     Serial.print(" brPress: "); Serial.print(brPressure);
     Serial.print(" brDepth: "); Serial.print(brDepth);
