@@ -3,6 +3,13 @@ Modular oceanographic systems using consumer-off-the-shelf parts with no prior e
 
  This work will be presented at MTS Great Lakes in 2025. If curious please check out [my website's page](https://www.sophiescopazzi.com/projects/sealabmos) about it for some other words.
 
+## Current Supported System Types
+
+1. **Traditional CTD**: Salinity, temperature, depth sensors with three variants: 1.5in and 2.0in PVC (~140m) or 2.0in steel pipe (~350m)  
+2. **Temperature logger**: Temperature only monitoring for a ~few days to ~two weeks, based on system configuration
+3. **Bottom Pressure Recorder**: Pressure only for tide measuring, research ongoing for three used in conjuction for wave height and direction
+4. **Surface Float**: All sensors optional. Salinity, water temperature, GNSS/location, LED beacon, atmospheric pressure/temperature, light, etc.
+
 ### Base Datalogger Hardware
 
 | **Name** | **Adafruit Part** # | **What it does** | **Accuracy** | **Cost** |
@@ -28,14 +35,3 @@ Modular oceanographic systems using consumer-off-the-shelf parts with no prior e
 | **Sensor Cables**      |      |      |      |      |
 | [STEMMA QT / Qwiic JST SH 4-pin Cable](https://www.adafruit.com/product/5385) | 5385 | Sensor connection | — | \$1–1.5 |
 | [STEMMA QT / Qwiic 5 Port Hub](https://www.adafruit.com/product/5625) | 5625 | Sensor connection | — | \$2.5 |
-
-## Version One (Complete)
-
-This is now old. Please see SeaLabMOS above. See [2024.4.19_SeaLabCTD_v1_Manual.pdf](https://github.com/sscopazzi/SeaLabCTD/blob/main/a_SeaLabCTD_v1/2024.4.19_SeaLabCTD_v1_Manual.pdf) for everything about the first version.
-
-### Hardware (Chapter 3 in Manual)
-[Arduino Uno R3](https://docs.arduino.cc/hardware/uno-rev3/)
-
-[Atlas Scientific Conductivity Probe K 10](https://atlas-scientific.com/kits/conductivity-k-10-kit/)
-
-[Blue Robotics Bar30 High-Resolution 300m Depth/Pressure Sensor](https://bluerobotics.com/store/sensors-sonars-cameras/sensors/bar30-sensor-r1/)
