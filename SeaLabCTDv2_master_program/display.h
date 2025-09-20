@@ -32,7 +32,7 @@ inline void displayMode0(){
   display.setCursor(0,0);
   display.println("        PROFILE");  
   display.print(" ");             display.println(currentTime.timestamp(DateTime::TIMESTAMP_FULL));
-  if (salinityBool) {   display.print("Sal:");          display.print(sal,2);             display.print(" | TDS:");  display.println(tds,0); }
+  if (salinityBool) {   display.print("Sal:");          display.println(sal,2);         }            //display.print(" | Grav:");  display.println(grav,0); }
   if (brFastTempBool) { display.print("brFastTemp:");   display.println(brFastTemp,2);  }
   if (bar02Bool || bar30Bool || bar100Bool) {           display.print("brPressure :");    display.println(brPressure,2); }   
   if (dallasTempBool) { display.print("dallasTemp:");   display.println(dallasTemp,2);  }

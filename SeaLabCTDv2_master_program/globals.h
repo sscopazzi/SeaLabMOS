@@ -185,7 +185,7 @@ void serialPrintValues() {
   if (brFastTempBool) { Serial.print(" brFastTemp: "); Serial.print(brFastTemp); }
 
   if (bar02Bool || bar30Bool || bar100Bool) { 
-    Serial.print(" brPress: "); Serial.print(brPressure);
+    // Serial.print(" brPress: "); Serial.print(brPressure);
     Serial.print(" brDepth: "); Serial.print(brDepth);
   }
   if (salinityBool)   { Serial.print(" sal: ");         Serial.print(sal);         }

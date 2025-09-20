@@ -12,6 +12,9 @@ String inputstring = "";   //a string to hold incoming data from the PC
 String sensorstring = "";  //a string to hold the data from the Atlas Scientific product
 
 extern float brFastTemp;
+extern float dallasTemp;
+extern bool ecBool;
+extern bool sBool;
 
 inline void salinSetup() {
   Serial1.begin(SALINITY_BAUD);       //set baud rate for software serial port_3 to 9600 (default of sensor)
@@ -31,6 +34,7 @@ inline void print_EC_data(void) {  //this function will pars the string
   char *GRAV;                   //char pointer used in string parsing
   // float f_ec;                                         //used to hold a floating point number that is the EC
 
+  // sensorstring.trim();
   sensorstring.toCharArray(sensorstring_array, 30);  //convert the string to a char array
   // Serial.println(sensorstring_array);              //debugging
   EC = strtok(sensorstring_array, ",");  //let's pars the array at each comma
@@ -38,24 +42,32 @@ inline void print_EC_data(void) {  //this function will pars the string
   SAL = strtok(NULL, ",");               //let's pars the array at each comma
   GRAV = strtok(NULL, ",");              //let's pars the array at each comma
 
-  // Serial.print("EC:");                                //we now print each value we parsed separately
-  // Serial.println(EC);                                 //this is the EC value
-
-  // Serial.print("TDS:");                               //we now print each value we parsed separately
-  // Serial.println(TDS);                                //this is the TDS value
-
-  // Serial.print("SAL:");                               //we now print each value we parsed separately
-  // Serial.println(SAL);                                //this is the salinity value
-
-  // Serial.print("GRAV:");                              //we now print each value we parsed separately
-  // Serial.println(GRAV);                               //this is the specific gravity
-  // Serial.println();                                   //this just makes the output easer to read
-
   ec = atof(EC);      //uncomment this line to convert the char to a float
   sal = atof(SAL);    //uncomment this line to convert the char to a float
   tds = atof(TDS);    //uncomment this line to convert the char to a float
   grav = atof(GRAV);  //uncomment this line to convert the char to a float
 }
+
+// inline void print_EC_data(void) {
+//     sensorstring.trim();  // remove leading/trailing whitespace and CR/LF
+
+//     // Serial.print("RAW sensorstring: '");
+//     // Serial.println(sensorstring);
+
+//     char sensorstring_array[30];
+//     sensorstring.toCharArray(sensorstring_array, 30);
+
+//     char *EC  = strtok(sensorstring_array, ",");
+//     char *SAL = strtok(NULL, ",");
+
+//     ec  = (EC  != NULL) ? atof(EC)  : 777;
+//     sal = (SAL != NULL) ? atof(SAL) : 777;
+
+//     // Serial.print("EC  = "); Serial.println(ec, 4);
+//     // Serial.print("Sal = "); Serial.println(sal, 4);
+// }
+
+
 
 void salinLoopWithPC() {
   if (Serial.available()) {                    //if a string from the PC has been received in its entirety
@@ -72,10 +84,23 @@ void salinLoopWithPC() {
       Serial.println(sensorstring);              //send that string to the PC's serial monitor
     } else                                       //if the first character in the string is NOT a digit
     {
+      Serial.println(sensorstring);
       print_EC_data();  //then call this function
     }
     sensorstring = "";  //clear the string
   }
+}
+
+void debugSerial1Raw() {
+    while (Serial1.available()) {
+        char c = Serial1.read();                // read one byte
+        Serial.print(c);                        // print as character
+        Serial.print(" [0x");
+        Serial.print(c, HEX);                   // print hex
+        Serial.print(" / ");
+        Serial.print((int)c);                   // print decimal ASCII
+        Serial.println("]");
+    }
 }
 
 void salinLoopWithoutPC(float tempCForComp) {
@@ -85,8 +110,10 @@ void salinLoopWithoutPC(float tempCForComp) {
      T,n <cr> | n = any value; floating point or int */ // was RT
 
   // Send temperature compensation + read command
-  // Serial1.print("T," + String(tempCForComp, 2) + "\r"); 
+  // Serial1.print("RT," + String(tempCForComp, 2) + "\r"); 
   // delay(50);
+
+  // Serial1.print("R\r");  // Continuous sample on, we will send T in-situ temp compensation
 
   sensorstring.remove(0);                        // Removes all characters
   if (Serial1.available()) {                     //if a string from the Atlas Scientific product has been received in its entirety
@@ -95,6 +122,7 @@ void salinLoopWithoutPC(float tempCForComp) {
       Serial.println(sensorstring);              //send that string to the PC's serial monitor
     } else                                       //if the first character in the string is NOT a digit
     {
+      Serial.println(sensorstring);
       print_EC_data();  //then call this function
     }
     sensorstring = "";  //clear the string
