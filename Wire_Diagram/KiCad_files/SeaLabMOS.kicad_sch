@@ -10,7 +10,8 @@
 		(rev "1")
 		(company "Aspect Wave LLC")
 		(comment 1 "LED beacon on heatsink")
-		(comment 2 "All sensors listed bottom left")
+		(comment 2 "STEMMA QT ports simplified")
+		(comment 3 "All sensors listed bottom left")
 	)
 	(lib_symbols
 		(symbol "Device:D"
@@ -796,7 +797,7 @@
 					)
 				)
 				(text "FTMP (0x77)"
-					(at 0 -2.54 0)
+					(at 0.254 -3.556 0)
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1689,6 +1690,96 @@
 					(at 19.05 -12.7 180)
 					(length 2.54)
 					(name "VIN"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
+		(symbol "ctd:Adafruit_Mini_GPS_PA1010D"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "Adafruit_Mini_GPS_PA1010D_0_1"
+				(rectangle
+					(start -3.81 -1.27)
+					(end 13.97 -11.43)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "Adafruit_Mini_GPS_PA1010D_1_1"
+				(text "Adafruit Mini\nGPS PA1010D\n"
+					(at 5.08 1.524 0)
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(pin passive line
+					(at -3.81 -6.35 0)
+					(length 3.81)
+					(name "STEMMA_QT"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -3469,6 +3560,16 @@
 	)
 	(wire
 		(pts
+			(xy 149.86 152.4) (xy 149.86 165.1)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "69e9881a-1eb9-4e8c-9083-42470eb5abcb")
+	)
+	(wire
+		(pts
 			(xy 237.49 35.56) (xy 237.49 107.95)
 		)
 		(stroke
@@ -3486,6 +3587,16 @@
 			(type default)
 		)
 		(uuid "6fb7c3c9-63e5-46ea-900c-6f21ce0c8854")
+	)
+	(wire
+		(pts
+			(xy 143.51 152.4) (xy 149.86 152.4)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "70da5c3c-e6b7-4549-b03e-9bc05f2925ff")
 	)
 	(wire
 		(pts
@@ -3546,6 +3657,16 @@
 			(type default)
 		)
 		(uuid "7b3c3772-dff1-44fa-ac87-67769f0d9960")
+	)
+	(wire
+		(pts
+			(xy 149.86 165.1) (xy 153.67 165.1)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7c02ffa1-985a-4cff-8d96-e4c3b50c8061")
 	)
 	(wire
 		(pts
@@ -4037,6 +4158,17 @@
 		)
 		(uuid "fff60549-52fa-4f2a-82b8-d1c7191969ef")
 	)
+	(text "(cut wires as purchased, solder STEMMA QT)"
+		(exclude_from_sim no)
+		(at 196.342 145.288 0)
+		(effects
+			(font
+				(size 1.016 1.016)
+			)
+			(justify left bottom)
+		)
+		(uuid "07cb9cee-7c80-40b0-a097-70fab27070e1")
+	)
 	(text "Blue Robotics Bar\nPressure Sensor"
 		(exclude_from_sim no)
 		(at 195.58 155.702 0)
@@ -4114,12 +4246,13 @@
 		)
 		(uuid "6963104e-4bf5-4ffa-a21e-72e8f848151e")
 	)
-	(text "Adafruit Feather RP2040 Adalogger - STEMMA QT / Qwiic\nAdafruit DS3231 Precision RTC FeatherWing\n\nAdafruit 3.7V Lithium Ion Battery w/ Power Switch\n2x 100K Resistors for Battery Voltage Monitoring\nAdafruit 12V Bias Voltage Boost Converter\nBuckToot Protector and 590nm LED\nAdafruit Chainable DS18B20 Extender Breakout\n\nBlue Robotics Fast Temp\n10k Thermistor w/ 10k Resistor\nAdafruit Waterproof 1-Wire DS18B20 Digital Temp\n\nBlue Robotics Bar02/Bar30/Bar100 Pressure\n\nAtlas Scientific K 1.0 Kit Salinity\n\n"
+	(text "Adafruit Feather RP2040 Adalogger - STEMMA QT / Qwiic\nAdafruit DS3231 Precision RTC FeatherWing\nAdafruit Mini GPS PA1010D\n\nAdafruit 3.7V Lithium Ion Battery w/ Power Switch\n2x 100K Resistors for Battery Voltage Monitoring\nAdafruit 12V Bias Voltage Boost Converter\nBuckToot Protector and 590nm LED\nAdafruit Chainable DS18B20 Extender Breakout\n\nBlue Robotics Fast Temp\n10k Thermistor w/ 10k Resistor\nAdafruit Waterproof 1-Wire DS18B20 Digital Temp\n\nBlue Robotics Bar02/Bar30/Bar100 Pressure\n\nAtlas Scientific K 1.0 Kit Salinity"
 		(exclude_from_sim no)
-		(at 15.24 198.882 0)
+		(at 13.462 196.342 0)
 		(effects
 			(font
-				(size 2.032 2.032)
+				(size 1.905 1.905)
+				(thickness 0.2381)
 			)
 			(justify left bottom)
 		)
@@ -4352,6 +4485,73 @@
 			(project ""
 				(path "/2b88df0d-ed83-4383-9471-7e748ad5f29a"
 					(reference "D1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "ctd:Adafruit_Mini_GPS_PA1010D")
+		(at 157.48 158.75 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "2589cc6c-7333-4862-95dc-ebe764e472d4")
+		(property "Reference" "U14"
+			(at 157.48 158.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "~"
+			(at 172.72 162.681 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 157.48 158.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 157.48 158.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 157.48 158.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin ""
+			(uuid "d2c10869-b6df-4b42-9723-13b965459339")
+		)
+		(instances
+			(project ""
+				(path "/2b88df0d-ed83-4383-9471-7e748ad5f29a"
+					(reference "U14")
 					(unit 1)
 				)
 			)
