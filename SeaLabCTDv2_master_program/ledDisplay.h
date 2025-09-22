@@ -1,11 +1,21 @@
 #pragma once
 // /***************************************************************/
+// DEVICE MODE LED LIGHT MEANING
+// 0 = Fast sampling every loop       — Bright Green, LED always on
+// 1 = 1-minute mode                  — Orange
+// 2 = 10-minute mode                 — Yellow
+// 3 = Charge mode (LED always on)    — Purple
+// 4 = Bottom Pressure Recorder       — Cyan
+// 5 = Pressure Only Profile          — Red
+// any other value = unknown mode     — White
+
 // LED control utilities for SeaLabCTDv2.
 // - Maps deviceMode to NeoPixel colors
 // - Blinks mode LED at startup/change
 // - Implements Group-Occulting (Oc.Gp 3) beacon pattern
 // Separate from battery voltage LED logic.
 // /***************************************************************/
+
 #include "battMonitoring.h"   // provides `pixel` and NeoPixel helpers
 
 // Gate prints with your existing flag (defined in your .ino)
@@ -13,12 +23,13 @@ extern bool serialDisplay;
 
 static inline uint32_t colorForMode(int deviceMode) {
   switch (deviceMode) {
-    case 0:  return pixel.Color(0, 255, 0);      // Fast sampling — Green
-    case 1:  return pixel.Color(0, 255, 0);      // 1-min         — Green
-    case 2:  return pixel.Color(255, 255, 0);    // 10-min        — Yellow
-    case 3:  return pixel.Color(180, 0, 255);    // Charge        — Magenta/Purple
-    case 4:  return pixel.Color(0,255,255);       // BPR          — Cyan
-    default: return pixel.Color(255, 0, 0);      // Unknown       — Red
+    case 0:  return pixel.Color(0, 255, 0);       // Fast sampling — Bright Green
+    case 1:  return pixel.Color(255, 128, 0);     // 1-min         — Orange
+    case 2:  return pixel.Color(255, 255, 0);     // 10-min        — Yellow
+    case 3:  return pixel.Color(180, 0, 255);     // Charge        — Purple
+    case 4:  return pixel.Color(0, 255, 255);     // BPR           — Cyan
+    case 5:  return pixel.Color(255, 255, 255);   // Pressure Only — White
+    default: return pixel.Color(255, 0, 0);       // Unknown       — Red
   }
 }
 
@@ -33,6 +44,7 @@ static inline void blinkDeviceModeLED(int deviceMode, uint8_t blinks = 5, uint16
       case 2:  Serial.println("Mode 2: 10-min interval");           break;
       case 3:  Serial.println("Mode 3: Charge");                    break;
       case 4:  Serial.println("Mode 4: Bottom Pressure Recorder");  break;
+      case 5:  Serial.println("Mode 5: Pressure Only Profile");     break;
       default: Serial.println("Unknown deviceMode at startup");     break;
     }
   }

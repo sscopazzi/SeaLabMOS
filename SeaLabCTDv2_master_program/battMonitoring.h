@@ -1,20 +1,13 @@
 #pragma once
 // /***************************************************************/
-// DEVICE MODE LED LIGHT MEANING
-// 0 = Fast sampling every loop       — Green, LED always on
-// 1 = Alarm Mode One                 — Blue
-// 2 = Alarm Mode Two                 — Yellow
-// 3 = Charge mode (LED always on)    — Magenta, LED always on
-// 4 = Bottom Pressure Recorder       — Cyan
-// any other value = unknown mode     — Red
-
 // BATTERY VOLTAGE LED MEANING
-// 4.0+    GREEN      — Full
-// 3.8-3.6 CYAN       — Mostly full
-// 3.6-3.5 YELLOW     — Medium
-// 3.5-3.4 PURPLE     — Low
-// <3.4    RED        — Critical *FLASHES*
-//  ***************************************************************/
+// 4.0+      GREEN     — Full
+// 3.8-3.6   CYAN      — Mostly full
+// 3.6-3.5   YELLOW    — Medium
+// 3.5-3.35  PURPLE    — Low
+// 3.35-3.2  RED       — Critical (no blink)
+// <3.2      RED       — Dangerously low *FLASHES*
+// ***************************************************************/
 
 #include <Adafruit_NeoPixel.h>
 
@@ -22,6 +15,8 @@
 #define SLED PIN_LED
 
 Adafruit_NeoPixel pixel(1, LED, NEO_GRB + NEO_KHZ800);
+
+void redFlash();
 
 // Voltage thresholds
 const float battV_max = 4.2;
@@ -52,6 +47,7 @@ void readBatteryVoltage() {
 
   // Apply system-specific correction factor
   // Measure battery voltage with multi-meter while reading from serial
+  // positive from switch out to feather, negative from ground pin on feather
   // adjust correction factor until datalogger value is multi-meter value
   // this is a way to correct for now 100% knowing the exact resistor values
   #if SYSTEM_NAME == GREEN
@@ -71,7 +67,7 @@ void readBatteryVoltage() {
   #elif SYSTEM_NAME == BPR
     v *= 1.050;
   #elif SYSTEM_NAME == PRESS_ONLY
-    v *= 1.000; // DO ONCE MADE
+    v *= 1.0438; // DO ONCE MADE
   #else
     // warn in output dialog if unrecongized name
     #warning "Unknown SYSTEM_NAME; using default correction factor of 1.0"
@@ -84,8 +80,6 @@ void readBatteryVoltage() {
 // Map voltage to distinct color zones
 void updateBatteryLED(float battV) {
     static bool turnedOffInSampleMode = false;
-    static unsigned long lastBlinkTime = 0;
-    static bool blinkOn = false;
 
     if (currentMode == SAMPLE_MODE && millis() - bootMillis > 10000) {
         if (!turnedOffInSampleMode) {
@@ -99,35 +93,21 @@ void updateBatteryLED(float battV) {
     uint32_t color;
 
     if (battV >= 4.00) {
-        color = pixel.Color(0, 255, 0);       // Green — Full
-    } else if (battV >= 3.8) {
-        color = pixel.Color(0, 255, 255);     // Cyan — Mostly full
-    } else if (battV >= 3.6) {
-        color = pixel.Color(255, 255, 0);     // Yellow — Medium
-    } else if (battV >= 3.50) {
-        color = pixel.Color(180, 0, 255);     // Purple — Low
-    } else if (battV >= 3.40) {
-        color = pixel.Color(255, 0, 0);       // Red — Critical (no blink)
-    } else {
-        // RED — Dangerously Low, BLINKING
-        // REMOVE THIS AND USE REDFLASH(); 
-        unsigned long now = millis();
-        if (now - lastBlinkTime >= 500) {
-            blinkOn = !blinkOn;
-            lastBlinkTime = now;
-        }
-
-        if (blinkOn) {
-            color = pixel.Color(255, 0, 0);   // Red ON
-        } else {
-            color = pixel.Color(0, 0, 0);     // OFF
-        }
-
-        pixel.setPixelColor(0, color);
-        pixel.show();
-        return;
+    color = pixel.Color(0, 255, 0);       // Green — Full
+} else if (battV >= 3.80) {
+    color = pixel.Color(0, 255, 255);     // Cyan — Mostly full
+} else if (battV >= 3.60) {
+    color = pixel.Color(255, 255, 0);     // Yellow — Medium
+} else if (battV >= 3.50) {
+    color = pixel.Color(180, 0, 255);     // Purple — Low
+} else if (battV >= 3.20) {
+    color = pixel.Color(255, 0, 0);       // Red — Critical (no blink)
+} else {
+    // RED — Dangerously low *FLASHES*
+    while (1) {
+        redFlash();   // DO NOT USE UNTIL BATTERY IS CHARGED MORE
     }
-
+}
     // Non-blinking steady color
     pixel.setPixelColor(0, color);
     pixel.show();

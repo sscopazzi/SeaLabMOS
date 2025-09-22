@@ -22,34 +22,41 @@
 #define STEEL 5         // extra-deep
 #define TWOIN 6         // two-inch PVC
 #define BPR 7           // pressure only sensor, larger battery, records first 20min of every hr by default (can use 3 in a triangle for calculating wave height/direction??)
-#define PRESS_ONLY 8    // 1.5" pvc with small bat
+#define PRESS_ONLY 8    // 1.5" pvc continuous pressure 
 //#############################
 #define SYSTEM_NAME PRESS_ONLY
 //#############################
 
-int deviceMode = 4;          // 0 = fast as possible, 1 uses WAIT_TIME_ONE, 2 uses WAIT_TIME_TWO, 3 is charge mode, 4 is BPR, samples at 4Hz
-bool serialDisplay = true;  // Set to false to disable all Serial prints
-bool displayBool = false;     // Adafruit Feather OLED Display
-int timeZone = -10;          // time zone of commputer time, as program pulls time from computer to set RTC, but must convert
+int deviceMode = 5;
+// 0 = fast as possible
+// 1 uses WAIT_TIME_ONE
+// 2 uses WAIT_TIME_TWO
+// 3 is charge mode 
+// 4 is BPR (samples at 4Hz first 20min of every hr)
+// 5 is continuous pressure recording at 5Hz
+
+bool serialDisplay  = true;  // Set to false to disable all Serial prints
+bool displayBool    = false;     // Adafruit Feather OLED Display
+int timeZone        = -7;          // time zone of commputer time, as program pulls time from computer to set RTC, but must convert
 
 // ###### SENSORS USED BY SYSTEM ######
 bool salinityBool = false;  // Atlas Scientific Salinity Sensor
-bool ecBool = false;
-bool sBool = false;
-bool tdsBool = false;
-bool sgBool = false;
+bool ecBool       = false;
+bool sBool        = false;
+bool tdsBool      = false;
+bool sgBool       = false;
 
 // ###### TEMPERATURE ######
 bool dallasTempBool = false;   // Dallas Temperature sensor
-bool thermTempBool = false;    // Adafruit Thermistor
-bool pt100Bool = false;        // Adafruit PT100
+bool thermTempBool  = false;    // Adafruit Thermistor
+bool pt100Bool      = false;        // Adafruit PT100
 bool brFastTempBool = false;  // Blue Robotics Fast Temperature
 
 // ###### PRESSURE ######
-bool pressDFBool = false;  // DF Robot analog pressure sensor
-bool bar02Bool = true;    // Blue Robotics Bar02
-bool bar30Bool = false;    // Blue Robotics Bar30
-bool bar100Bool = false;   // Blue Robotics Bar100
+bool pressDFBool  = false;  // DF Robot analog pressure sensor
+bool bar02Bool    = false;    // Blue Robotics Bar02
+bool bar30Bool    = true;    // Blue Robotics Bar30
+bool bar100Bool   = false;   // Blue Robotics Bar100
 
 // ###### UTILITY ######
 bool beaconBool = false;  // Surface float LED beacon
@@ -62,24 +69,24 @@ bool lightBool = false;  // Adafruit AS7262 6-channel Visible Light Sensor
 #define WAIT_TIME_BPR 20  // First 20 min of the hour (for Bottom Pressure Recorder)
 
 // GPIO PIN SETTINGS ######
-#define RTC_INTERRUPT_PIN 25   // RTC interrupt pin
-#define BEACON_PIN 11          // enable 3.3V->12V board to power LED surface beacon
+#define RTC_INTERRUPT_PIN   25   // RTC interrupt pin
+#define BEACON_PIN          11          // enable 3.3V->12V board to power LED surface beacon
 #define SALINITY_ENABLE_PIN 4  // enable pin for salinity board
 
 // ANALOG PINS
-#define THERMISTOR_PIN A3  // Analog pin used for thermistor
-#define BATTV_PIN A2       // Analog pin used for battery voltage monitoring
+#define THERMISTOR_PIN  A3  // Analog pin used for thermistor
+#define BATTV_PIN       A2  // Analog pin used for battery voltage monitoring
 
 // OTHER VALUES
-#define SYSTEM_BAUD 115200  // Serial with computer
+#define SYSTEM_BAUD   115200  // Serial with computer
 #define SALINITY_BAUD 9600  // baud rate of EZO circuit, default is 9600
 #define WATER_DENSITY 1029  // 1029 is default seawater for Blue Robotics sensors
 
 // SEALABCTD UTILILITY HEADER FILES
 #include "globals.h"         // self made file
 #include "display.h"         // Adafruit_SH110x and Adafruit_GFX
-#include "battMonitoring.h"  // Battery monitoring functions
 #include "ledDisplay.h"      // Functions for flashing the NeoPixel and orange beacon for surface assets
+#include "battMonitoring.h"  // Battery monitoring functions
 
 // SEALABCTD SENSOR HEADER FILES
 #include "blueRoboticsPressure.h"  // Blue Robotics' pressure sensors
@@ -106,6 +113,7 @@ void setup() {
     case 1:  // WAIT TIME 1
     case 2:  // WAIT TIME 2
     case 4:  // BPR
+    case 5:  // PRESS_ONLY always recording pressure
       set_sys_clock_khz(50000, true);
       delay(5);
       yield();
@@ -152,9 +160,9 @@ void setup() {
   setupBatteryMonitoring((deviceMode == 3) ? CHARGE_MODE : SAMPLE_MODE);  // Battery LED policy
   blinkDeviceModeLED(deviceMode);
 
-  if (!displayBool && (deviceMode == 1 || deviceMode == 2)) {
+  if (!displayBool && (deviceMode == 1 || deviceMode == 2 || deviceMode == 4 || deviceMode == 5)) {
     uint32_t start = millis();
-    while (millis() - start <= 7000) {  // keep LED on 5 seconds
+    while (millis() - start <= 7000) {  // keep LED on 7 seconds
       readBatteryVoltage();
       updateBatteryLED(battV);
       yield();
@@ -224,7 +232,7 @@ void setup() {
   // When time needs to be re-set on a previously configured device, the
   // following line sets the RTC to the date & time this sketch was compiled
   // rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); // time of computer, no UTC
-  setRtcCompileTimeUTC();
+  // setRtcCompileTimeUTC();
 
   rtc.clearAlarm(1);
   delay(2);  // tiny debounce delay for some DS3231 boards, not 100% sure if needed
@@ -271,13 +279,13 @@ void setup() {
 
   // Set the first alarm based on mode to start sampling on even numbers
   currentTime = rtc.now();
-  bprSampling = (currentTime.minute() < 20);
 
-  if (deviceMode == 1) {
-    nextSample = getNextAlarm(currentTime, WAIT_TIME_ONE);
+  if (deviceMode == 4) { bprSampling = (currentTime.minute() < 20); }
 
-    if (serialDisplay) Serial.println("Initial Alarm One set");
-    if (displayBool) { alarmDisplay(WAIT_TIME_ONE, "Alarm One"); }
+  if (deviceMode == 1) { nextSample = getNextAlarm(currentTime, WAIT_TIME_ONE);
+
+    if (serialDisplay) { Serial.println("Initial Alarm One set");  }
+    if (displayBool)   { alarmDisplay(WAIT_TIME_ONE, "Alarm One"); }
 
     rtc.setAlarm1(nextSample, DS3231_A1_Minute);
 
@@ -305,8 +313,8 @@ void setup() {
     if (displayBool) { alarmDisplay(WAIT_TIME_BPR, "BPR Window"); }
   }
 
-  if (deviceMode == 0) {
-    // full timestamp for fast mode
+  if (deviceMode == 0 || deviceMode == 5) {
+    // full timestamp for fast mode or PRESS_ONLY mode
     timestamp_filename = currentTime.timestamp(DateTime::TIMESTAMP_FULL);
     timestamp_filename.replace(":", "-");                       // Replace colons (not valid in filenames)
     if (serialDisplay) { Serial.println(timestamp_filename); }  // mode 0 has all time valyes YYYY-MM-DD hh-mm-ss
@@ -510,18 +518,36 @@ void runMode4() {
   yield();
 }
 
+void runMode5() {
+
+  currentTime = rtc.now();
+
+  if (bar02Bool || bar30Bool || bar100Bool) { brPressureSample(); }  // Only have one sensor in this platform
+  readBatteryVoltage();
+
+  writeDataRow();
+
+  if (serialDisplay) { Serial.print("battV: ");     Serial.print(battV);        }
+  if (serialDisplay) { Serial.print(" brPress: ");  Serial.println(brPressure); }
+    
+  delay(50); // run at 10Hz
+}
+
 void loop() {
   // Central dispatcher for different modes
   switch (deviceMode) {
     case 0:
-      runMode0();
+      runMode0(); // Profile
       break;
     case 1:
     case 2:
-      runMode1and2();
+      runMode1and2(); // WAIT_TIME_ONE or WAIT_TIME_TWO
       break;
     case 4:
-      runMode4();
+      runMode4(); // BPR
+      break;
+    case 5:
+      runMode5(); // PRESS_ONLY profile
       break;
     default:
       redFlash();
