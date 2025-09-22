@@ -117,10 +117,6 @@ static inline void updateFilenameAndHeader() {
   }
 }
 
-void writeHeader(){
-
-}
-
 void writeDataRow() {
   myFile = SD.open(timestamp_filename + ".csv", FILE_WRITE);
 
@@ -160,7 +156,7 @@ void writeDataRow() {
     myFile.print(lt600, decimalPlaces); myFile.print(',');
     myFile.print(lt650, decimalPlaces); myFile.print(',');
   } else {
-    myFile.print(",,,,,"); // 6 placeholders, preserve header alignment
+    myFile.print(",,,,,,"); // 6 placeholders, preserve header alignment
   }
 
     // ###### BLUE ROBOTICS PRESSURE ######

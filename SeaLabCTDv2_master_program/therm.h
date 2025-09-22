@@ -17,7 +17,7 @@
 #define ADC_MAX            4095.0    // 12-bit resolution
 
 // 10 kΩ resistor used in series for sampling is not perfect
-// Measure with a multimeter and enter here so the temp value is more accurate (by a small amount)
+// Measure the resistor a multimeter and enter here so the temp value is more accurate (by a small amount)
 #if SYSTEM_NAME == GREEN
   #define SERIESRESISTOR 10220.0
   #warning "SYSTEM_NAME: GREEN"
@@ -37,7 +37,7 @@
   #define SERIESRESISTOR 10000.0
   #warning "SYSTEM_NAME: STEEL"
 #else
-  #warning "UNKNOWN SYSTEM_NAME — USING DEFAULT VALUE FOR SERIESRESISTOR"
+  // #warning "UNKNOWN SYSTEM_NAME — USING DEFAULT VALUE FOR SERIESRESISTOR"
   #warning "IF NO THERMISTOR, IGNORE THIS MESSAGE" (THIS MESSAGE IS FROM THERM.H)
   #define SERIESRESISTOR 1000.0
 #endif

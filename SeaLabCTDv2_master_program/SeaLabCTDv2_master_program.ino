@@ -11,17 +11,17 @@
 // THESE ARE MY SYSTEM NAMES, YOUR NAMES WILL BE DIFFERENCE
 
 // TEMP LOGGER SWITCH COLORS
-#define GREEN 0
-#define BLUE 1
+#define GREEN  0
+#define BLUE   1
 #define ORANGE 2
-#define WHITE 3
+#define WHITE  3
 
 // OTHER SYSTEM VBAT NUMBERS
 // CURRENTLY ONLY USED FOR VBAT CORRECTION FACTOR AND THERMISTOR RESISTOR VALUES
 #define NALGENE 4       // surface float
-#define STEEL 5         // extra-deep
-#define TWOIN 6         // two-inch PVC
-#define BPR 7           // pressure only sensor, larger battery, records first 20min of every hr by default (can use 3 in a triangle for calculating wave height/direction??)
+#define STEEL   5       // extra-deep
+#define TWOIN   6       // two-inch PVC
+#define BPR     7       // pressure only sensor, larger battery, records first 20min of every hr by default (can use 3 in a triangle for calculating wave height/direction??)
 #define PRESS_ONLY 8    // 1.5" pvc continuous pressure 
 //#############################
 #define SYSTEM_NAME PRESS_ONLY
@@ -33,23 +33,23 @@ int deviceMode = 5;
 // 2 uses WAIT_TIME_TWO
 // 3 is charge mode 
 // 4 is BPR (samples at 4Hz first 20min of every hr)
-// 5 is continuous pressure recording at 5Hz
+// 5 is continuous pressure recording at ~5Hz
 
 bool serialDisplay  = true;  // Set to false to disable all Serial prints
-bool displayBool    = false;     // Adafruit Feather OLED Display
-int timeZone        = -7;          // time zone of commputer time, as program pulls time from computer to set RTC, but must convert
+bool displayBool    = false; // Adafruit Feather OLED Display
+int timeZone        = -7;    // time zone of commputer time, as program pulls time from computer to set RTC, but must convert
 
 // ###### SENSORS USED BY SYSTEM ######
 bool salinityBool = false;  // Atlas Scientific Salinity Sensor
-bool ecBool       = false;
-bool sBool        = false;
-bool tdsBool      = false;
-bool sgBool       = false;
+bool ecBool       = false;  // is value enabled on EZO circuit to send?
+bool sBool        = false;  // is value enabled on EZO circuit to send?
+bool tdsBool      = false;  // is value enabled on EZO circuit to send?
+bool sgBool       = false;  // is value enabled on EZO circuit to send?
 
 // ###### TEMPERATURE ######
-bool dallasTempBool = false;   // Dallas Temperature sensor
-bool thermTempBool  = false;    // Adafruit Thermistor
-bool pt100Bool      = false;        // Adafruit PT100
+bool dallasTempBool = false;  // Dallas Temperature sensor
+bool thermTempBool  = false;  // Adafruit Thermistor
+bool pt100Bool      = false;  // Adafruit PT100
 bool brFastTempBool = false;  // Blue Robotics Fast Temperature
 
 // ###### PRESSURE ######
@@ -344,14 +344,15 @@ void runMode0() {
 
   currentTime = rtc.now();
   if (bar02Bool || bar30Bool || bar100Bool) { brPressureSample(); }  // the || means or because there will only ever be one type connected at a time
+  if (lightBool) {sampleLight(); }
   if (thermTempBool) { thermTemp = getThermTemp(); }
   if (pt100Bool) { pt100Temp = getPT100Temp(); }
   if (pressDFBool) { getPressureDF(); }
   if (dallasTempBool) { dallasTemp = getDallasTemp(); }
   if (brFastTempBool) { brFastTempSample(); }  // Immeditely before salinity as salinity uses temperature
-
+  
   // salinLoopWithPC();
-  salinLoopWithoutPC(pt100Temp);
+  // salinLoopWithoutPC(pt100Temp);
 
   // uint32_t saltTime = millis();
   // if ((uint32_t)(saltTime - lastSaltMs) >= 400UL) {
@@ -369,6 +370,7 @@ void runMode0() {
 
   readBatteryVoltage();
   writeDataRow();
+
   if (serialDisplay) { serialPrintValues(); }
   if (displayBool) { displayMode0(); }
 
@@ -521,16 +523,16 @@ void runMode4() {
 void runMode5() {
 
   currentTime = rtc.now();
-
-  if (bar02Bool || bar30Bool || bar100Bool) { brPressureSample(); }  // Only have one sensor in this platform
+  if (bar02Bool || bar30Bool || bar100Bool) { brPressureSample(); }
+  else   // Only have one sensor in this platform
   readBatteryVoltage();
 
   writeDataRow();
-
-  if (serialDisplay) { Serial.print("battV: ");     Serial.print(battV);        }
-  if (serialDisplay) { Serial.print(" brPress: ");  Serial.println(brPressure); }
+  serialPrintValues();
     
-  delay(50); // run at 10Hz
+  delay(20); // run at ~13Hz
+  // No delay is ~17Hz
+  yield();
 }
 
 void loop() {

@@ -67,11 +67,12 @@ void readBatteryVoltage() {
   #elif SYSTEM_NAME == BPR
     v *= 1.050;
   #elif SYSTEM_NAME == PRESS_ONLY
-    v *= 1.0438; // DO ONCE MADE
+    v *= 1.047; 
   #else
     // warn in output dialog if unrecongized name
-    #warning "Unknown SYSTEM_NAME; using default correction factor of 1.0"
-    v *= 1.0;
+    // 1.053 is the average of all platform values
+    #warning "Unknown SYSTEM_NAME; using default correction factor of 1.053"
+    v *= 1.053;
   #endif
 
   battV = v;

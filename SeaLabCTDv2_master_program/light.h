@@ -7,7 +7,7 @@ Adafruit_AS726x ams;
 uint16_t sensorValues[AS726x_NUM_CHANNELS];
 
 //buffer to hold calibrated values (not used by default in this example)
-float calibratedValues[AS726x_NUM_CHANNELS];
+// uint16_t calibratedValues[AS726x_NUM_CHANNELS];
 
 extern bool serialDisplay;
 
@@ -15,7 +15,7 @@ extern float lt450, lt500, lt550, lt570, lt600, lt650;
 
 void setupLight(){
   if (!ams.begin() ) {
-    if (serialDisplay) { Serial.println("could not connect to sensor! Please check your wiring."); }
+    if (serialDisplay) { Serial.println("Could not connect to sensor! Please check your wiring."); }
     while(1);
   }
 } 
@@ -35,16 +35,23 @@ void sampleLight() {
 
   //ams.drvOff(); //uncomment this if you want to use the driver LED for readings
 
-  //read the values!
-  // ams.readRawValues(sensorValues);
-  ams.readCalibratedValues(calibratedValues);
+  ams.readRawValues(sensorValues);
+  lt450 = sensorValues[AS726x_VIOLET];
+  lt500 = sensorValues[AS726x_BLUE];
+  lt550 = sensorValues[AS726x_GREEN];
+  lt570 = sensorValues[AS726x_YELLOW];
+  lt600 = sensorValues[AS726x_ORANGE];
+  lt650 = sensorValues[AS726x_RED];
 
-  lt450 = calibratedValues[AS726x_VIOLET];
-  lt500 = calibratedValues[AS726x_BLUE];
-  lt550 = calibratedValues[AS726x_GREEN];
-  lt570 = calibratedValues[AS726x_YELLOW];
-  lt600 = calibratedValues[AS726x_ORANGE];
-  lt650 = calibratedValues[AS726x_RED];
+
+  // ams.readCalibratedValues(calibratedValues); // this requires the onboard LED to be powered?
+
+  // lt450 = calibratedValues[AS726x_VIOLET];
+  // lt500 = calibratedValues[AS726x_BLUE];
+  // lt550 = calibratedValues[AS726x_GREEN];
+  // lt570 = calibratedValues[AS726x_YELLOW];
+  // lt600 = calibratedValues[AS726x_ORANGE];
+  // lt650 = calibratedValues[AS726x_RED];
 
 }
 
