@@ -161,9 +161,9 @@ void writeDataRow() {
 
     // ###### BLUE ROBOTICS PRESSURE ######
   if (bar02Bool || bar30Bool || bar100Bool) {
-    myFile.print(brPressure, decimalPlaces);    myFile.print(',');
-    myFile.print(brTemperature, decimalPlaces); myFile.print(',');
-    myFile.print(brDepth, decimalPlaces);       myFile.print(',');
+    myFile.print(brPressure,    decimalPlaces);    myFile.print(',');
+    myFile.print(brTemperature, decimalPlaces);    myFile.print(',');
+    myFile.print(brDepth,       decimalPlaces);
   } else {
     myFile.print(",,,"); // preserve alignment
   }
@@ -184,6 +184,7 @@ void serialPrintValues() {
     // Serial.print(" brPress: "); Serial.print(brPressure);
     Serial.print(" brDepth: "); Serial.print(brDepth);
   }
+
   if (salinityBool)   { Serial.print(" sal: ");         Serial.print(sal);         }
   if (thermTempBool)  { Serial.print(" thermTemp: ");   Serial.print(thermTemp);   }
   if (dallasTempBool) { Serial.print(" dallasTemp: ");  Serial.print(dallasTemp);  }

@@ -37,7 +37,7 @@ int deviceMode = 5;
 
 bool serialDisplay  = true;  // Set to false to disable all Serial prints
 bool displayBool    = false; // Adafruit Feather OLED Display
-int timeZone        = -7;    // time zone of commputer time, as program pulls time from computer to set RTC, but must convert
+int timeZone        = -10;    // time zone of commputer time, as program pulls time from computer to set RTC, but must convert
 
 // ###### SENSORS USED BY SYSTEM ######
 bool salinityBool = false;  // Atlas Scientific Salinity Sensor
@@ -232,7 +232,7 @@ void setup() {
   // When time needs to be re-set on a previously configured device, the
   // following line sets the RTC to the date & time this sketch was compiled
   // rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); // time of computer, no UTC
-  // setRtcCompileTimeUTC();
+  setRtcCompileTimeUTC();
 
   rtc.clearAlarm(1);
   delay(2);  // tiny debounce delay for some DS3231 boards, not 100% sure if needed
@@ -524,7 +524,7 @@ void runMode5() {
 
   currentTime = rtc.now();
   if (bar02Bool || bar30Bool || bar100Bool) { brPressureSample(); }
-  else   // Only have one sensor in this platform
+  
   readBatteryVoltage();
 
   writeDataRow();
