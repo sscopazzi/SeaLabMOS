@@ -1,7 +1,4 @@
-# SeaLabMOS
-Modular oceanographic systems using consumer-off-the-shelf parts with no prior experience and basic tools.
-
- This work will be presented at MTS Great Lakes in 2025. If curious please check out [my website's page](https://www.sophiescopazzi.com/projects/sealabmos) about it for some other words.
+This work will be presented at MTS Great Lakes in 2025. If curious, I can send you the paper in prep, or check out [my website's page](https://www.sophiescopazzi.com/projects/sealabmos) for some pictures.
 
 ## Current Supported System Types
 
