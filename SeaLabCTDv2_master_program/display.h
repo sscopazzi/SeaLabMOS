@@ -32,15 +32,17 @@ inline void displayMode0(){
   display.setCursor(0,0);
   display.println("        PROFILE");  
   display.print(" ");             display.println(currentTime.timestamp(DateTime::TIMESTAMP_FULL));
-  if (salinityBool) {   display.print("Sal:");          display.println(sal,2);         }            //display.print(" | Grav:");  display.println(grav,0); }
-  if (brFastTempBool) { display.print("brFastTemp:");   display.println(brFastTemp,2);  }
-  if (bar02Bool || bar30Bool || bar100Bool) {           display.print("brPressure :");    display.println(brPressure,2); }   
-  if (dallasTempBool) { display.print("dallasTemp:");   display.println(dallasTemp,2);  }
-  if (thermTempBool) {  display.print("thermTemp :");    display.println(thermTemp,2);   }    
-  if (pressDFBool) {    display.print("pressDF_ft:");   display.println(pressDF_ft,2);  }   
-  if (pressDFBool) {    display.print("pressDF_ft:");   display.println(pressDF_ft,2);  } 
-  if (pt100Bool) {    display.print("PT100       :");   display.println(pt100Temp,2);  } 
-  display.print("battV  :");      display.println(battV,2);      
+                                             display.print("battV     :");  display.println(battV,2);   
+
+  if (salinityBool)                         {display.print("Sal       :");  display.println(sal,2);         }           
+  if (brFastTempBool)                       {display.print("brFastTemp:");  display.println(brFastTemp,2);  }
+  if (bar02Bool || bar30Bool || bar100Bool) {display.print("brPressure:");  display.println(brPressure,2);  }   
+  if (dallasTempBool)                       {display.print("dallasTemp:");  display.println(dallasTemp,2);  }
+  if (thermTempBool)                        {display.print("thermTemp :");  display.println(thermTemp,2);   }    
+  if (pressDFBool)                          {display.print("pressDF_ft:");  display.println(pressDF_ft,2);  }   
+  if (pressDFBool)                          {display.print("pressDF_ft:");  display.println(pressDF_ft,2);  } 
+  if (pt100Bool)                            {display.print("PT100     :");  display.println(pt100Temp,2);   } 
+  if (lightBool)                            {display.print("450nm     :");  display.println(lt450);         }   
   display.display(); 
 }
 

@@ -24,10 +24,10 @@
 #define BPR     7       // pressure only sensor, larger battery, records first 20min of every hr by default (can use 3 in a triangle for calculating wave height/direction??)
 #define PRESS_ONLY 8    // 1.5" pvc continuous pressure 
 //#############################
-#define SYSTEM_NAME PRESS_ONLY
+#define SYSTEM_NAME TWOIN
 //#############################
 
-int deviceMode = 5;
+int deviceMode = 0;
 // 0 = fast as possible
 // 1 uses WAIT_TIME_ONE
 // 2 uses WAIT_TIME_TWO
@@ -36,21 +36,21 @@ int deviceMode = 5;
 // 5 is continuous pressure recording at ~5Hz
 
 bool serialDisplay  = true;  // Set to false to disable all Serial prints
-bool displayBool    = false; // Adafruit Feather OLED Display
-int timeZone        = -10;    // time zone of commputer time, as program pulls time from computer to set RTC, but must convert
+bool displayBool    = true; // Adafruit Feather OLED Display
+int timeZone        = -8;    // time zone of commputer time, as program pulls time from computer to set RTC, but must convert
 
 // ###### SENSORS USED BY SYSTEM ######
-bool salinityBool = false;  // Atlas Scientific Salinity Sensor
-bool ecBool       = false;  // is value enabled on EZO circuit to send?
-bool sBool        = false;  // is value enabled on EZO circuit to send?
-bool tdsBool      = false;  // is value enabled on EZO circuit to send?
-bool sgBool       = false;  // is value enabled on EZO circuit to send?
+bool salinityBool = true;  // Atlas Scientific Salinity Sensor
+bool ecBool       = true;  // is value enabled on EZO circuit to send?
+bool sBool        = true;  // is value enabled on EZO circuit to send?
+bool tdsBool      = true;  // is value enabled on EZO circuit to send?
+bool sgBool       = true;  // is value enabled on EZO circuit to send?
 
 // ###### TEMPERATURE ######
 bool dallasTempBool = false;  // Dallas Temperature sensor
 bool thermTempBool  = false;  // Adafruit Thermistor
 bool pt100Bool      = false;  // Adafruit PT100
-bool brFastTempBool = false;  // Blue Robotics Fast Temperature
+bool brFastTempBool = true;  // Blue Robotics Fast Temperature
 
 // ###### PRESSURE ######
 bool pressDFBool  = false;  // DF Robot analog pressure sensor
@@ -62,7 +62,7 @@ bool bar100Bool   = false;   // Blue Robotics Bar100
 bool beaconBool = false;  // Surface float LED beacon
 
 // ###### OTHER SENSORS ######
-bool lightBool = false;  // Adafruit AS7262 6-channel Visible Light Sensor
+bool lightBool = true;  // Adafruit AS7262 6-channel Visible Light Sensor
 
 #define WAIT_TIME_ONE 1   // 1 min (other: 5 min, 20 min, 30 min, etc.)
 #define WAIT_TIME_TWO 10  // 10 min (other: 1 hr, 12 hr, 24 hr, etc.)
@@ -351,7 +351,7 @@ void runMode0() {
   if (dallasTempBool) { dallasTemp = getDallasTemp(); }
   if (brFastTempBool) { brFastTempSample(); }  // Immeditely before salinity as salinity uses temperature
   
-  // salinLoopWithPC();
+  salinLoopWithPC();
   // salinLoopWithoutPC(pt100Temp);
 
   // uint32_t saltTime = millis();
@@ -372,7 +372,7 @@ void runMode0() {
   writeDataRow();
 
   if (serialDisplay) { serialPrintValues(); }
-  if (displayBool) { displayMode0(); }
+  if (displayBool)   { displayMode0(); }
 
   // OLED update, only if enough time has passed
   // if (displayBool && (millis() - lastOledMs >= oledInterval)) {
