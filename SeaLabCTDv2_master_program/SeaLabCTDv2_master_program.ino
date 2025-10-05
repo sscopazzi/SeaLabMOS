@@ -3,10 +3,12 @@
 
 // Coming features...
 // 1. GNSS sensor
-// 2. Light sensor
-// 3. Fix/troubleshoot salinity sensor sometimes buffer overrun issues. Sensor puts more in the the buffer than we can read so it samples every 2 seconds to fix
-// 4. Salinity temp comp RT command sometimes works, related to #3
-// 5. Auto-select sensors based on system type (CTD, BPR, temp logger, etc)??
+// 2. Salinity temp comp RT command, see how well this actually changes anything????
+// 3. Auto-select sensors based on system type (CTD, BPR, temp logger, etc)??
+// 4. Wired system version, using ethernet and PoE
+// 5. RF/BT data offload for fully sealed system with subconn connector for charging?
+// 6. Pair with open source niskin bottles and make a rosette 
+// 7. Open source fluorometer
 
 // THESE ARE MY SYSTEM NAMES, YOUR NAMES WILL BE DIFFERENCE
 
