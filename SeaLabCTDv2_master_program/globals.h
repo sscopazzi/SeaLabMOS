@@ -33,7 +33,7 @@ extern RTC_DS3231 rtc;
 extern SdFat      SD;
 extern FsFile     myFile;
 extern String     header;
-extern String     timestamp_filename;
+// extern String     timestamp_filename;
 extern bool serialDisplay;
 
 // SD
