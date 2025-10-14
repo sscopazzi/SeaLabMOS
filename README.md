@@ -7,6 +7,9 @@ This work will be presented at MTS Great Lakes in 2025. If curious, I can send y
 3. **Bottom Pressure Recorder**: Pressure only for tide measuring, research ongoing for three used in conjuction for wave height and direction
 4. **Surface Float**: All sensors optional. Salinity, water temperature, GNSS/location, LED beacon, atmospheric pressure/temperature, light, etc.
 
+<img width="1472" height="903" alt="image" src="https://github.com/user-attachments/assets/9366ae90-1f33-4975-b4c2-4837cd8655a7" />
+
+
 ### Base Datalogger Hardware
 
 | **Name** | **Adafruit Part** # | **What it does** | **Accuracy** | **Cost** |
@@ -33,7 +36,7 @@ This work will be presented at MTS Great Lakes in 2025. If curious, I can send y
 | [STEMMA QT / Qwiic JST SH 4-pin Cable](https://www.adafruit.com/product/5385) | 5385 | Sensor connection | — | \$1–1.5 |
 | [STEMMA QT / Qwiic 5 Port Hub](https://www.adafruit.com/product/5625) | 5625 | Sensor connection | — | \$2.5 |
 
-### Static Sensors  
+### Sensors  
 
 | **Type** | Part # | Variable | Depth Rating (m) | Response Time | Accuracy | Cost |
 |---|---|---|---|---|---|---|
@@ -43,16 +46,9 @@ This work will be presented at MTS Great Lakes in 2025. If curious, I can send y
 | [10K Precision Epoxy Thermistor](https://www.adafruit.com/product/372) | 372 | Temperature | Not specified | 60% in 3 s, 90% in 7 s | ±0.1 – 0.5 °C | \$4 |
 | [Platinum RTD Sensor – PT100](https://www.adafruit.com/product/3290) | 3290 | Temperature | Not specified | — | — | \$— |
 | [PT100 RTD Amplifier – MAX31865](https://www.adafruit.com/product/3328) | 3328 | Amplifier for PT100 | — | — | — | \$— |
-
-> *Note:* For reduced costs, static deployments may not need a pressure sensor.  
-> Depth rating for temperature sensors isn’t specified by manufacturers and depends on sealant/epoxy.
-
-### Dynamic Sensors  
-
-| **Type** | Part # | Variable | Depth Rating (m) | Response Time | Accuracy | Cost |
-|---|---|---|---|---|---|---|
 | [Atlas Scientific K 1.0 Kit](https://atlas-scientific.com/kits/mini-conductivity-k-1-0-kit/) | — | Conductivity | 353 | 90% in 1 s | 90% in 1 s | \$200 |
 | [Blue Robotics Celsius Fast-Response (TSYS01)](https://bluerobotics.com/store/sensors-cameras/sensors/celsius-sensor-r1/) | — | Temperature | 975 | 3 s (90% in 2 s, measured) | ±0.1 °C | \$70 |
 | [Blue Robotics Bar02 / Bar30 / Bar100 (pressure options)](https://bluerobotics.com/product-category/sensors-cameras/sensors/) | — | Pressure | 10m, 300, 1,000m | — | — | \$80, \$90, \$380 |
 
-> *Note:* Response time and accuracy are from manufacturer specs and initial testing.
+> *Note:* Response time and accuracy are from manufacturer specs and initial testing. For reduced costs, static deployments may not need a pressure sensor.  
+> Depth rating for temperature sensors not from Blue Robotics are not specified by manufacturers and depends on sealant/epoxy.
