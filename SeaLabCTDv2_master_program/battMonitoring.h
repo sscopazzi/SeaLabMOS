@@ -19,8 +19,8 @@ Adafruit_NeoPixel pixel(1, LED, NEO_GRB + NEO_KHZ800);
 void redFlash();
 
 // Voltage thresholds
-const float battV_max = 4.2;
-const float battV_min = 3.4;
+// const float battV_max = 4.2;
+// const float battV_min = 3.4;
 
 // Modes
 enum BatteryLEDMode { CHARGE_MODE, SAMPLE_MODE };

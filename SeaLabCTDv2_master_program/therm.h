@@ -55,6 +55,8 @@ inline float getThermTemp() {
   if (avg <= 0.0f || avg >= ADC_MAX) return NAN;
 
   // Compute Rtherm both ways for one-shot debugging
+  // If the returned temp value is wrong you might have flipped the positive and negative
+  // Try using either one of these and seeing the returned value
   const float Rt_notflipped = SERIESRESISTOR *        avg  / (ADC_MAX - avg); // VCC->Rseries->Ain->Rtherm->GND
   const float Rt_flipped    = SERIESRESISTOR * (ADC_MAX - avg) /        avg;  // VCC->Rtherm->Ain->Rseries->GND
 
@@ -67,6 +69,7 @@ inline float getThermTemp() {
 
   // Use the standard Adafruit wiring first (not flipped)
   float Rt = Rt_notflipped;
+  // float Rt = Rt_flipped;
 
   // Steinhart–Hart (Beta form)
   float invT = (1.0f / (TEMPERATURENOMINAL + 273.15f)) + (log(Rt / THERMISTORNOMINAL) / BCOEFFICIENT);

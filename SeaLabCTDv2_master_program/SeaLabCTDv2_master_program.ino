@@ -154,7 +154,7 @@ void setup() {
     Serial.println("SYSTEM STARTUP");
   }
 
-  analogReadResolution(12);  // specify in code for proper battV reference
+  analogReadResolution(12);  // specify in code for proper battV and thermistor reference
   Wire.begin();
 
   delay(100);
