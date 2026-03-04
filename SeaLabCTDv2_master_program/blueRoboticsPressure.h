@@ -8,8 +8,8 @@
 // /***************************************************************/
 
 #include <Wire.h>
-#include "MS5837.h"
-#include "KellerLD.h"
+#include "MS5837.h"      // by Blue Robotics
+#include "KellerLD.h"    // by Blue Robotics 
 #include "ledDisplay.h"           // Functions for flashing the NeoPixel and orange beacon for surface assets
 
 // Serial gating

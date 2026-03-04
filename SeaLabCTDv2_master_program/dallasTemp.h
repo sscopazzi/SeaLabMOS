@@ -16,7 +16,7 @@
 //  ***************************************************************/
 
 // Dallas temp, the slow one
-#include <OneWire.h>
+#include <OneWire.h> // by Jim Studt, Tom Pollard
 // int DS18S20_Pin = 12; //DS18S20 Signal pin on digital 12
 
 extern float dallasTemp;

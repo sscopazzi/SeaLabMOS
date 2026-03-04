@@ -26,7 +26,7 @@
 #define BPR     7       // pressure only sensor, larger battery, records first 20min of every hr by default (can use 3 in a triangle for calculating wave height/direction??)
 #define PRESS_ONLY 8    // 1.5" pvc continuous pressure 
 //#############################
-#define SYSTEM_NAME TWOIN
+#define SYSTEM_NAME STEEL
 //#############################
 
 int deviceMode = 0;
@@ -37,7 +37,7 @@ int deviceMode = 0;
 // 4 is BPR (samples at 4Hz first 20min of every hr)
 // 5 is continuous pressure recording at ~5Hz
 
-bool serialDisplay  = true;  // Set to false to disable all Serial prints
+bool serialDisplay  = false;  // Set to false to disable all Serial prints after the setup 
 bool displayBool    = true; // Adafruit Feather OLED Display
 int timeZone        = -8;    // time zone of commputer time, as program pulls time from computer to set RTC, but must convert
 
@@ -57,14 +57,14 @@ bool brFastTempBool = true;  // Blue Robotics Fast Temperature
 // ###### PRESSURE ######
 bool pressDFBool  = false;  // DF Robot analog pressure sensor
 bool bar02Bool    = false;    // Blue Robotics Bar02
-bool bar30Bool    = true;    // Blue Robotics Bar30
-bool bar100Bool   = false;   // Blue Robotics Bar100
+bool bar30Bool    = false;    // Blue Robotics Bar30, all other systems use this one, except BPR
+bool bar100Bool   = true;   // Blue Robotics Bar100, STEEL only
 
 // ###### UTILITY ######
 bool beaconBool = false;  // Surface float LED beacon
 
 // ###### OTHER SENSORS ######
-bool lightBool = true;  // Adafruit AS7262 6-channel Visible Light Sensor
+bool lightBool = false;  // Adafruit AS7262 6-channel Visible Light Sensor, only this on the TWOIN
 
 #define WAIT_TIME_ONE 1   // 1 min (other: 5 min, 20 min, 30 min, etc.)
 #define WAIT_TIME_TWO 10  // 10 min (other: 1 hr, 12 hr, 24 hr, etc.)
@@ -354,7 +354,7 @@ void runMode0() {
   if (brFastTempBool) { brFastTempSample(); }  // Immeditely before salinity as salinity uses temperature
   
   salinLoopWithPC();
-  // salinLoopWithoutPC(pt100Temp);
+  // salinLoopWithoutPC(brFastTemp);
 
   // uint32_t saltTime = millis();
   // if ((uint32_t)(saltTime - lastSaltMs) >= 400UL) {

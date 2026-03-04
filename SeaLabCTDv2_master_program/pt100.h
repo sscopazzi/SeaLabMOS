@@ -8,7 +8,7 @@
 // - Matches your working pinout (CS=10, DI=9, DO=6, CLK=5)
 /***************************************************************/
 
-#include <Adafruit_MAX31865.h>
+#include <Adafruit_MAX31865.h> // by Adafruit
 
 // === Pin Configuration (software SPI) ===
 #define PT100_CS   10

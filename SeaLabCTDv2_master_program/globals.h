@@ -6,7 +6,7 @@
 // /***************************************************************/
 
 #include <Arduino.h>
-#include <RTClib.h>   // for DateTime, RTC_DS3231
+#include <RTClib.h>   // for DateTime, RTC_DS3231, by Adafruit
 #include "SdFat.h"    // for SdFat, FsFile
 #include <SPI.h>
 

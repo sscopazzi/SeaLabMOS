@@ -1,4 +1,4 @@
-#include "Adafruit_AS726x.h"
+#include "Adafruit_AS726x.h" // by Adafruit 
 
 //create the object
 Adafruit_AS726x ams;
