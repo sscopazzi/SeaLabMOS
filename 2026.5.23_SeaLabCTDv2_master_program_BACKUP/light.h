@@ -57,6 +57,10 @@ void sampleLight() {
 
 }
 
+
+
+
+
 /***************************************************************************
   This is a library for the Adafruit AS7262 6-Channel Visible Light Sensor
 

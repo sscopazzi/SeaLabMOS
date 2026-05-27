@@ -20,7 +20,7 @@
 // unsigned long lastOledMs = 0;       // Tracks last OLED update time
 // const int oledInterval = 1000;       // Interval between display updates
 
-String header = "time,deviceMode,battV,ec,sal,tds,dallasTemp,thermTemp,pt100Temp,brFastTemp,lt450,lt500,lt550,lt570,lt600,lt650,brPressure,brTemperature,brDepth,gpsLat,gpsLon,gpsAlt,gpsSpeed,gpsFix,gpsSats";
+String header = "time,deviceMode,battV,ec,sal,tds,dallasTemp,thermTemp,pt100Temp,brFastTemp,lt450,lt500,lt550,lt570,lt600,lt650,brPressure,brTemperature,brDepth";
 String timestamp_filename = "";   // YYYY-MM-DD hh-mm-ss in Mode 0 and YYYY-MM-DD in Modes 1 and 2
 
 RTC_DS3231 rtc;
@@ -67,15 +67,6 @@ float tds  = 999.0;
 float grav = 999.0;
 
 float lt450, lt500, lt550, lt570, lt600, lt650; // 6-channel light
-
-// GPS (gps.h) — defined here so globals.h is the single source of truth
-float   gpsLat   = 0.0;   // decimal degrees, positive = North
-float   gpsLon   = 0.0;   // decimal degrees, positive = East
-float   gpsAlt   = 0.0;   // meters above MSL
-float   gpsSpeed = 0.0;   // knots
-float   gpsAngle = 0.0;   // degrees true
-bool    gpsFix   = false;
-uint8_t gpsSats  = 0;
 
 // UTILITY
 int count = 0;
@@ -177,40 +168,10 @@ void writeDataRow() {
     myFile.print(",,,"); // preserve alignment
   }
 
-  // ###### GPS ######
-  myFile.print(',');
-  if (gpsBool) {
-    myFile.print(gpsLat,   6);   myFile.print(',');
-    myFile.print(gpsLon,   6);   myFile.print(',');
-    myFile.print(gpsAlt,   decimalPlaces); myFile.print(',');
-    myFile.print(gpsSpeed, decimalPlaces); myFile.print(',');
-    myFile.print(gpsFix  ? 1 : 0);        myFile.print(',');
-    myFile.print(gpsSats);
-  } else {
-    myFile.print(",,,,,"); // 6 placeholders, preserve header alignment
-  }
-
   myFile.println();
   myFile.close();
 }
 
-// Mode 6 — GPS-only surface float, 10 Hz.
-// Uses GPS timestamp directly (no RTC). Minimal columns for fast SD writes.
-// Header: gpsTime,gpsFix,gpsSats,gpsLat,gpsLon,gpsSpeed_kn,gpsAngle_deg,gpsAlt_m
-extern char gpsTimestamp[];  // defined in gps.h
-void writeDataRowMode6() {
-  myFile = SD.open(timestamp_filename + ".csv", FILE_WRITE);
-  myFile.print(gpsTimestamp);            myFile.print(',');
-  myFile.print(gpsFix   ? 1 : 0);       myFile.print(',');
-  myFile.print(gpsSats);                 myFile.print(',');
-  myFile.print(gpsLat,  6);             myFile.print(',');  // 6 dp = ~110mm on Earth
-  myFile.print(gpsLon,  6);             myFile.print(',');
-  myFile.print(gpsSpeed, 2);            myFile.print(',');
-  myFile.print(gpsAngle, 2);            myFile.print(',');
-  myFile.print(gpsAlt,   1);
-  myFile.println();
-  myFile.close();
-}
 
 void serialPrintValues() {
   Serial.print("Time: ");
@@ -237,16 +198,6 @@ void serialPrintValues() {
     Serial.print(" 570nm: "); Serial.print(lt570);
     Serial.print(" 600nm: "); Serial.print(lt600);
     Serial.print(" 650nm: "); Serial.print(lt650);
-  }
-
-  if (gpsBool) {
-    Serial.print(" GPS fix: "); Serial.print(gpsFix ? "YES" : "NO");
-    if (gpsFix) {
-      Serial.print(" Lat: ");   Serial.print(gpsLat, 6);
-      Serial.print(" Lon: ");   Serial.print(gpsLon, 6);
-      Serial.print(" Alt: ");   Serial.print(gpsAlt);
-      Serial.print("m Sats: "); Serial.print(gpsSats);
-    }
   }
 
   Serial.println();

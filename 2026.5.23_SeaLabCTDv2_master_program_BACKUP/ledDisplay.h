@@ -6,9 +6,8 @@
 // 2 = 10-minute mode                 — Yellow
 // 3 = Charge mode (LED always on)    — Purple
 // 4 = Bottom Pressure Recorder       — Cyan
-// 5 = Pressure Only Profile          — White
-// 6 = GPS Surface Float 10 Hz        — Blue
-// any other value = unknown mode     — Red
+// 5 = Pressure Only Profile          — Red
+// any other value = unknown mode     — White
 
 // LED control utilities for SeaLabCTDv2.
 // - Maps deviceMode to NeoPixel colors
@@ -30,14 +29,13 @@ static inline uint32_t colorForMode(int deviceMode) {
     case 3:  return pixel.Color(180, 0, 255);     // Charge        — Purple
     case 4:  return pixel.Color(0, 255, 255);     // BPR           — Cyan
     case 5:  return pixel.Color(255, 255, 255);   // Pressure Only — White
-    case 6:  return pixel.Color(0, 0, 255);       // GPS Float     — Blue
     default: return pixel.Color(255, 0, 0);       // Unknown       — Red
   }
 }
 
-// Blink the mode color a few times at startup (or when changing modes).
-// Mode 6 overrides to fast green blinks — distinct from all other modes.
+// Blink the mode color a few times at startup (or when changing modes)
 static inline void blinkDeviceModeLED(int deviceMode, uint8_t blinks = 5, uint16_t on_ms = 250, uint16_t off_ms = 250) {
+  const uint32_t color = colorForMode(deviceMode);
 
   if (serialDisplay) {
     switch (deviceMode) {
@@ -47,26 +45,10 @@ static inline void blinkDeviceModeLED(int deviceMode, uint8_t blinks = 5, uint16
       case 3:  Serial.println("Mode 3: Charge");                    break;
       case 4:  Serial.println("Mode 4: Bottom Pressure Recorder");  break;
       case 5:  Serial.println("Mode 5: Pressure Only Profile");     break;
-      case 6:  Serial.println("Mode 6: GPS Surface Float 10 Hz");   break;
       default: Serial.println("Unknown deviceMode at startup");     break;
     }
   }
 
-  if (deviceMode == 6) {
-    // Fast green blinks — 5 quick flashes, clearly different from other modes
-    const uint32_t green = pixel.Color(0, 255, 0);
-    for (uint8_t i = 0; i < 5; i++) {
-      pixel.setPixelColor(0, green);
-      pixel.show();
-      delay(80);
-      pixel.setPixelColor(0, 0);
-      pixel.show();
-      delay(80);
-    }
-    return;
-  }
-
-  const uint32_t color = colorForMode(deviceMode);
   for (uint8_t i = 0; i < blinks; i++) {
     pixel.setPixelColor(0, color);
     pixel.show();
@@ -149,38 +131,5 @@ static inline void tickBeacon() {
     next_ms = now + PAUSE_TIME;
     cycle   = 0;
     flash   = 0;
-  }
-}
-
-// === Mode 6 — GPS surface float LED pattern ===
-// Red onboard LED (PIN_LED / pin 13), non-blocking.
-// Pattern: two short pips then a long pause — clearly distinct from the
-// NeoPixel mode colors and the beacon's group-occulting pattern.
-//   pip   100ms ON
-//   gap    80ms OFF
-//   pip   100ms ON
-//   pause   2.72s OFF
-//   total   3.0s cycle
-static bool          _m6_inited = false;
-static uint8_t       _m6_step   = 0;
-static unsigned long _m6_next   = 0;
-
-static inline void tickMode6LED() {
-  if (!_m6_inited) {
-    pinMode(PIN_LED, OUTPUT);
-    digitalWrite(PIN_LED, LOW);
-    _m6_inited = true;
-    _m6_step   = 0;
-    _m6_next   = millis();
-  }
-
-  unsigned long now = millis();
-  if ((long)(now - _m6_next) < 0) return;  // not time yet
-
-  switch (_m6_step) {
-    case 0: digitalWrite(PIN_LED, HIGH); _m6_next = now + 100;  _m6_step = 1; break;  // pip 1 on
-    case 1: digitalWrite(PIN_LED, LOW);  _m6_next = now + 80;   _m6_step = 2; break;  // pip 1 off
-    case 2: digitalWrite(PIN_LED, HIGH); _m6_next = now + 100;  _m6_step = 3; break;  // pip 2 on
-    case 3: digitalWrite(PIN_LED, LOW);  _m6_next = now + 2720; _m6_step = 0; break;  // long pause
   }
 }

@@ -1,4 +1,4 @@
-#include <Adafruit_TinyUSB.h>  // REQUIRED for Serial with TinyUSB on RP2040
+// #include <Adafruit_TinyUSB.h>  // REQUIRED for Serial with TinyUSB on RP2040
 #include <Wire.h>
 #include "RTClib.h"
 #include <Adafruit_NeoPixel.h>
@@ -10,8 +10,9 @@
 #define ORANGE  2
 #define WHITE   3
 #define NALGENE 4
+#define CTD1    5
 
-#define SYSTEM_NAME ORANGE
+#define SYSTEM_NAME CTD1
 // write GREEN, BLUE, ORANGE, WHITE, NALGENE
 
 // ==========================
@@ -37,6 +38,9 @@
 // Any other value = unknown mode (defaults to SAMPLE_MODE behavior)
 // Battery voltage range: ~3.45 V (cutoff) to ~4.18 V (fully charged)
 int deviceMode = 0;
+// 0 is as fast as possible
+// 1 is 1 min wakeup with alarm
+// 2 is 10 min wakeup with alarm
 
 // ==========================
 // BATTERY MONITORING
@@ -83,6 +87,8 @@ float readBatteryVoltage() {
     v *= 1.000;
   #elif SYSTEM_NAME == NALGENE
     v *= 1.047;
+  #elif SYSTEM_NAME == CTD1
+    v *= 1.025;
   #else
     #warning "Unknown SYSTEM_NAME; using default correction factor of 1.07"
     v *= 1.07;
@@ -204,17 +210,17 @@ void setup() {
   if (deviceMode == 1) {
     Serial.println("deviceMode1 RTC <3");
     DateTime nextAligned(now.unixtime() - now.second() + 60);
-    rtc.setAlarm1(nextAligned, DS3231_A1_Second);  // <== use this
+    rtc.setAlarm1(nextAligned, DS3231_A1_Second);  // 
 
   } else if (deviceMode == 2) {
     Serial.println("deviceMode2 RTC <3");
     uint32_t t = now.unixtime();
     uint32_t next10Min = (t - (t % 600)) + 600;
-    rtc.setAlarm1(DateTime(next10Min), DS3231_A1_Second);  // <== use this
+    rtc.setAlarm1(DateTime(next10Min), DS3231_A1_Second);  // 
 
   } else if (deviceMode != 0 && deviceMode != 3) {
     Serial.println("IMPROPER DEVICE MODE SELECTION — setting 3s test alarm");
-    rtc.setAlarm1(now + TimeSpan(0, 0, 0, 3), DS3231_A1_Second);  // <== use this
+    rtc.setAlarm1(now + TimeSpan(0, 0, 0, 3), DS3231_A1_Second);  
   }
 
 
@@ -236,6 +242,7 @@ void setup() {
   setupBatteryMonitoring((deviceMode == 0 || deviceMode == 3) ? CHARGE_MODE : SAMPLE_MODE);
   Serial.print("Boot complete. DeviceMode: ");
   Serial.println(deviceMode);
+  // Serial.println("Going to sleep now...");
 }
 
 // ==========================
