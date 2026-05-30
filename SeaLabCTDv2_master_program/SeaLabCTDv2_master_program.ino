@@ -26,11 +26,14 @@
 #define BPR     7       // pressure only sensor, larger battery, records first 20min of every hr by default (can use 3 in a triangle for calculating wave height/direction??)
 #define PRESS_ONLY 8    // 1.5" pvc continuous pressure 
 #define FLOAT_ONE 9
+#define FLOAT_TWO 10
+#define BRTL_ONE 11
+#define BRTL_TWO 12
 //#############################
-#define SYSTEM_NAME FLOAT_ONE
+#define SYSTEM_NAME BRTL_ONE
 //#############################
 
-int deviceMode = 6;
+int deviceMode = 0;
 // 0 = fast as possible
 // 1 uses WAIT_TIME_ONE
 // 2 uses WAIT_TIME_TWO
@@ -54,7 +57,7 @@ bool sgBool       = false;  // is value enabled on EZO circuit to send?
 bool dallasTempBool = false;  // Dallas Temperature sensor
 bool thermTempBool  = false;  // Adafruit Thermistor
 bool pt100Bool      = false;  // Adafruit PT100
-bool brFastTempBool = false;  // Blue Robotics Fast Temperature
+bool brFastTempBool = true;  // Blue Robotics Fast Temperature, powered permanently via Qwiic/STEMMA QT 3.3V
 
 // ###### PRESSURE ######
 bool pressDFBool  = false;  // DF Robot analog pressure sensor
@@ -67,7 +70,7 @@ bool beaconBool = false;  // Surface float LED beacon
 
 // ###### OTHER SENSORS ######
 bool lightBool = false;  // Adafruit AS7262 6-channel Visible Light Sensor, only this on the TWOIN
-bool gpsBool   = true;   // Adafruit GPS FeatherWing (Serial1)
+bool gpsBool   = false;  // Adafruit GPS FeatherWing (Serial1)
                          // Do NOT enable gpsBool and salinityBool simultaneously (both use Serial1)
                          // Mode 6 automatically uses gpsSetup10Hz() — set gpsBool = true and deviceMode = 6
 
@@ -76,18 +79,18 @@ bool gpsBool   = true;   // Adafruit GPS FeatherWing (Serial1)
 #define WAIT_TIME_BPR 20  // First 20 min of the hour (for Bottom Pressure Recorder)
 
 // GPIO PIN SETTINGS ######
-#define RTC_INTERRUPT_PIN   25   // RTC interrupt pin
-#define BEACON_PIN          11          // enable 3.3V->12V board to power LED surface beacon
-#define SALINITY_ENABLE_PIN 4  // enable pin for salinity board
+#define RTC_INTERRUPT_PIN   25  // RTC interrupt pin
+#define BEACON_PIN          11  // enable 3.3V->12V board to power LED surface beacon
+#define SALINITY_ENABLE_PIN 4   // enable pin for salinity board
 
 // ANALOG PINS
 #define THERMISTOR_PIN  A3  // Analog pin used for thermistor
 #define BATTV_PIN       A2  // Analog pin used for battery voltage monitoring
 
 // OTHER VALUES
-#define SYSTEM_BAUD   115200  // Serial with computer
-#define SALINITY_BAUD 9600  // baud rate of EZO circuit, default is 9600
-#define WATER_DENSITY 1029  // 1029 is default seawater for Blue Robotics sensors
+#define SYSTEM_BAUD   115200 // Serial with computer
+#define SALINITY_BAUD 9600   // baud rate of EZO circuit, default is 9600
+#define WATER_DENSITY 1029   // 1029 is default seawater for Blue Robotics sensors
 
 // SEALABCTD UTILILITY HEADER FILES
 #include "globals.h"         // self made file
@@ -162,9 +165,25 @@ void setup() {
   }
 
   analogReadResolution(12);  // specify in code for proper battV and thermistor reference
-  Wire.begin();
 
+  // if (serialDisplay) Serial.println("Wire init...");
+  Wire.begin();
+  Wire.setClock(100000);  // force standard 100kHz I2C, don't let it float at 50MHz-scaled default
   delay(100);
+
+  if (serialDisplay) {
+  Serial.println("Scanning Wire bus...");
+  for (byte addr = 1; addr < 127; addr++) {
+    Wire.beginTransmission(addr);
+    byte err = Wire.endTransmission();
+    if (err == 0) {
+      Serial.print("Found device at 0x");
+      Serial.println(addr, HEX);
+    }
+  }
+  Serial.println("Scan done");
+  }
+
   pinMode(THERMISTOR_PIN, INPUT);
   setupBatteryMonitoring((deviceMode == 3) ? CHARGE_MODE : SAMPLE_MODE);  // Battery LED policy
   blinkDeviceModeLED(deviceMode);
@@ -213,16 +232,9 @@ void setup() {
     }
   }
 
-  if (brFastTempBool) {
-    brFastTempSetup();
-    if (displayBool) {
-      display.println("brFastTemp init");
-      display.display();
-    }
-  }
-  delay(200);
+  // delay(200);
 
-  // thermTemp does not have a setup function
+  // thermTemp does not have a setup function (fully analog sensor)
   if (thermTempBool && displayBool) {
     display.println("thermTemp init");
     display.display();
@@ -274,6 +286,15 @@ void setup() {
     if (serialDisplay) Serial.println("Mode 6: RTC skipped, GPS provides timestamp");
   }
 
+  if (serialDisplay) Serial.println("brFastTemp setup...");
+  if (brFastTempBool) {
+    brFastTempSetup();
+      if (displayBool) {
+        display.println("brFastTemp init");
+        display.display();
+      }
+  }
+
   // Try to initialize SD card
   if (!SD.begin(config)) {
     if (serialDisplay) Serial.println("SD card initialization FAILED!");
@@ -285,18 +306,16 @@ void setup() {
       display.display();
       delay(3000);
     }
-
-    // Decide whether to halt or continue without SD
-    while (1) {
-      if (serialDisplay) Serial.println("No SD card logging possible. Halting...");
-      redFlash();
-    }
-  } else {
-    if (serialDisplay) Serial.println("SD card initialized OK");
-    if (displayBool) {
-      display.println("SD init OK");
-      display.display();
-    }
+    if (serialDisplay) Serial.println("No SD card logging possible. Halting...");
+      while(true){
+        redFlash();
+      }
+    } else {
+      if (serialDisplay) Serial.println("SD card initialized OK");
+      if (displayBool) {
+        display.println("SD init OK");
+        display.display();
+      }
   }
 
   pinMode(BUTTON_A, INPUT_PULLUP);  // not used yet
@@ -316,6 +335,12 @@ void setup() {
       if (displayBool)   { alarmDisplay(WAIT_TIME_ONE, "Alarm One"); }
 
       rtc.setAlarm1(nextSample, DS3231_A1_Minute);
+        if (serialDisplay) {
+          Serial.print("Alarm set for: ");
+          Serial.println(nextSample.timestamp(DateTime::TIMESTAMP_FULL));
+          Serial.print("Current time:  ");
+          Serial.println(rtc.now().timestamp(DateTime::TIMESTAMP_FULL));
+        }
 
     } else if (deviceMode == 2) {
       nextSample = getNextAlarm(currentTime, WAIT_TIME_TWO);
@@ -464,7 +489,8 @@ void runMode1and2() {
   if (pt100Bool) { pt100Temp = getPT100Temp(); }
   if (pressDFBool) { getPressureDF(); }
   if (dallasTempBool) { dallasTemp = getDallasTemp(); }
-  if (brFastTempBool) { brFastTempSample(); }  // Immeditely before salinity as salinity uses temperature
+  if (brFastTempBool) { brFastTempSample(); }
+
 
   if (salinityBool) {
     digitalWrite(4, HIGH);  // Turn on to sample

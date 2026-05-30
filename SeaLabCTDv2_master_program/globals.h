@@ -298,64 +298,9 @@ DateTime getNextAlarm(DateTime now, uint8_t waitTimeMinutes) {
 }
 
 inline void setRtcCompileTimeUTC() {
-    if (serialDisplay) Serial.println("RTC lost power, let's set the time!");
-
-    // Pull compile-time date/time
-    const char* compileDate = __DATE__;  // e.g., "Aug 31 2025"
-    const char* compileTime = __TIME__;  // e.g., "18:23:45"
-
-    // Convert month string to number
-    const char* months = "JanFebMarAprMayJunJulAugSepOctNovDec";
-    char monthStr[4];
-    int month, day, year, hour, minute, second;
-
-    sscanf(compileDate, "%3s %d %d", monthStr, &day, &year);
-    month = (strstr(months, monthStr) - months)/3 + 1;
-
-    sscanf(compileTime, "%d:%d:%d", &hour, &minute, &second);
-
-    // Apply timeZone offset (local → UTC)
-    hour -= timeZone;
-
-    // Array of days per month (non-leap year)
-    int daysInMonth[] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
-
-    // Adjust for leap year
-    auto isLeap = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
-    if (isLeap) daysInMonth[1] = 29;
-
-    // Robust positive/negative hour adjustment
-    while (hour < 0) {
-        hour += 24;
-        day -= 1;
-        if (day < 1) {
-            month -= 1;
-            if (month < 1) {
-                month = 12;
-                year -= 1;
-                isLeap = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
-                daysInMonth[1] = isLeap ? 29 : 28;
-            }
-            day = daysInMonth[month - 1];
-        }
-    }
-
-    while (hour >= 24) {
-        hour -= 24;
-        day += 1;
-        if (day > daysInMonth[month - 1]) {
-            day = 1;
-            month += 1;
-            if (month > 12) {
-                month = 1;
-                year += 1;
-                isLeap = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
-                daysInMonth[1] = isLeap ? 29 : 28;
-            }
-        }
-    }
-
-    rtc.adjust(DateTime(year, month, day, hour, minute, second));
-
-    if (serialDisplay) Serial.println("RTC set in UTC!");
+  if (serialDisplay) Serial.println("RTC lost power, let's set the time!");
+  DateTime compiled = DateTime(F(__DATE__), F(__TIME__));
+  // adjust for timezone offset to get UTC
+  rtc.adjust(DateTime(compiled.unixtime() - (timeZone * 3600)));
+  if (serialDisplay) Serial.println("RTC set in UTC!");
 }
