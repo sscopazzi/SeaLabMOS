@@ -30,7 +30,7 @@
 #define BRTL_ONE 11
 #define BRTL_TWO 12
 //#############################
-#define SYSTEM_NAME BRTL_ONE
+#define SYSTEM_NAME BRTL_ONE // if I am broken go look at code from before 2026.5.29 before I mucked with power switching the fast temp sensor
 //#############################
 
 int deviceMode = 0;
