@@ -10,30 +10,7 @@
 // 6. Pair with open source niskin bottles and make a rosette 
 // 7. Open source fluorometer
 
-// THESE ARE MY SYSTEM NAMES, YOUR NAMES WILL BE DIFFERENCE
-
-// TEMP LOGGER SWITCH COLORS
-#define GREEN  0
-#define BLUE   1
-#define ORANGE 2
-#define WHITE  3
-
-// OTHER SYSTEM VBAT NUMBERS
-// CURRENTLY ONLY USED FOR VBAT CORRECTION FACTOR AND THERMISTOR RESISTOR VALUES
-#define NALGENE 4       // surface float
-#define STEEL   5       // extra-deep
-#define TWOIN   6       // two-inch PVC
-#define BPR     7       // pressure only sensor, larger battery, records first 20min of every hr by default (can use 3 in a triangle for calculating wave height/direction??)
-#define PRESS_ONLY 8    // 1.5" pvc continuous pressure 
-#define FLOAT_ONE 9
-#define FLOAT_TWO 10
-#define BRTL_ONE 11
-#define BRTL_TWO 12
-//#############################
-#define SYSTEM_NAME BRTL_ONE // if I am broken go look at code from before 2026.5.29 before I mucked with power switching the fast temp sensor
-//#############################
-
-int deviceMode = 0;
+int deviceMode = 2;
 // 0 = fast as possible
 // 1 uses WAIT_TIME_ONE
 // 2 uses WAIT_TIME_TWO
@@ -47,11 +24,11 @@ bool displayBool    = false; // Adafruit Feather OLED Display
 int timeZone        = -7;    // time zone of commputer time, as program pulls time from computer to set RTC, but must convert
 
 // ###### SENSORS USED BY SYSTEM ######
-bool salinityBool = false;  // Atlas Scientific Salinity Sensor
-bool ecBool       = false;  // is value enabled on EZO circuit to send?
-bool sBool        = false;  // is value enabled on EZO circuit to send?
-bool tdsBool      = false;  // is value enabled on EZO circuit to send?
-bool sgBool       = false;  // is value enabled on EZO circuit to send?
+bool salinityBool = true;  // Atlas Scientific Salinity Sensor
+bool ecBool       = true;  // is value enabled on EZO circuit to send?
+bool sBool        = true;  // is value enabled on EZO circuit to send?
+bool tdsBool      = true;  // is value enabled on EZO circuit to send?
+bool sgBool       = true;  // is value enabled on EZO circuit to send?
 
 // ###### TEMPERATURE ######
 bool dallasTempBool = false;  // Dallas Temperature sensor
@@ -62,7 +39,7 @@ bool brFastTempBool = true;  // Blue Robotics Fast Temperature, powered permanen
 // ###### PRESSURE ######
 bool pressDFBool  = false;  // DF Robot analog pressure sensor
 bool bar02Bool    = false;  // Blue Robotics Bar02
-bool bar30Bool    = false;  // Blue Robotics Bar30, all other systems use this one, except BPR
+bool bar30Bool    = true;  // Blue Robotics Bar30, all other systems use this one, except BPR
 bool bar100Bool   = false;  // Blue Robotics Bar100, STEEL only
 
 // ###### UTILITY ######
@@ -75,7 +52,7 @@ bool gpsBool   = false;  // Adafruit GPS FeatherWing (Serial1)
                          // Mode 6 automatically uses gpsSetup10Hz() — set gpsBool = true and deviceMode = 6
 
 #define WAIT_TIME_ONE 1   // 1 min (other: 5 min, 20 min, 30 min, etc.)
-#define WAIT_TIME_TWO 10  // 10 min (other: 1 hr, 12 hr, 24 hr, etc.)
+#define WAIT_TIME_TWO 20  // 10 min (other: 1 hr, 12 hr, 24 hr, etc.)
 #define WAIT_TIME_BPR 20  // First 20 min of the hour (for Bottom Pressure Recorder)
 
 // GPIO PIN SETTINGS ######
@@ -94,6 +71,7 @@ bool gpsBool   = false;  // Adafruit GPS FeatherWing (Serial1)
 
 // SEALABCTD UTILILITY HEADER FILES
 #include "globals.h"         // self made file
+#include "systemNames.h"     // contains all system names 
 #include "display.h"         // Adafruit_SH110x and Adafruit_GFX
 #include "ledDisplay.h"      // Functions for flashing the NeoPixel and orange beacon for surface assets
 #include "battMonitoring.h"  // Battery monitoring functions
@@ -108,7 +86,7 @@ bool gpsBool   = false;  // Adafruit GPS FeatherWing (Serial1)
 #include "pressDF.h"               // DF Robot Analog Pressure Sensor (required 3.3V->5V buck)
 #include "light.h"                 // 6-channel light sensor
 #include "gps.h"                   // Adafruit GPS FeatherWing
-                                   // ############################################################################################################
+// ############################################################################################################
 
 void setup() {
   // MUST CHANGE CLOCK SPEED BEFORE DOING ANYTHING ELSE
@@ -491,14 +469,11 @@ void runMode1and2() {
   if (dallasTempBool) { dallasTemp = getDallasTemp(); }
   if (brFastTempBool) { brFastTempSample(); }
 
-
   if (salinityBool) {
-    digitalWrite(4, HIGH);  // Turn on to sample
-    delay(1200);
-    salinLoopWithoutPC(dallasTemp);
-    // salinLoopWithoutPC(dallasTemp);  // must be after temperature
-    delay(1200);
-    digitalWrite(4, LOW);  // Turn off after sampling to save power
+    digitalWrite(4, HIGH);
+    delay(1000);                      // boot time
+    salinLoopWithoutPC(brFastTemp);   // sends RT,temp + reads
+    digitalWrite(4, LOW);
   }
 
   readBatteryVoltage();

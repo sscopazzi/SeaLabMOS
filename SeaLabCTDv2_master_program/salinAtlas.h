@@ -104,27 +104,49 @@ void debugSerial1Raw() {
 }
 
 void salinLoopWithoutPC(float tempCForComp) {
-  /* APPLY TEMPERATURE COMPENSATION FROM PROVIDED VALUE
-     (from any sensor or constant)
-     COMMAND SYNTAX FROM ATLAS SCIENTIFIC MANUAL:
-     T,n <cr> | n = any value; floating point or int */ // was RT
+  while (Serial1.available()) Serial1.read();          // flush boot/leftover chatter
 
-  // Send temperature compensation + read command
-  // Serial1.print("RT," + String(tempCForComp, 2) + "\r"); 
-  // delay(50);
+  Serial1.print("RT," + String(tempCForComp, 2) + "\r"); // read WITH temp compensation
 
-  // Serial1.print("R\r");  // Continuous sample on, we will send T in-situ temp compensation
+  unsigned long t0 = millis();                          // wait for the reading (~600ms)
+  while (!Serial1.available() && (millis() - t0) < 1500) { yield(); }
 
-  sensorstring.remove(0);                        // Removes all characters
-  if (Serial1.available()) {                     //if a string from the Atlas Scientific product has been received in its entirety
-    sensorstring = Serial1.readStringUntil(13);  //read the string until we see a <CR>
-    if (isdigit(sensorstring[0]) == false) {     //if the first character in the string is a digit
-      Serial.println(sensorstring);              //send that string to the PC's serial monitor
-    } else                                       //if the first character in the string is NOT a digit
-    {
+  sensorstring = "";
+  if (Serial1.available()) {
+    sensorstring = Serial1.readStringUntil(13);
+    if (isdigit(sensorstring[0]) == false) {
       Serial.println(sensorstring);
-      print_EC_data();  //then call this function
+    } else {
+      Serial.println(sensorstring);
+      print_EC_data();
     }
-    sensorstring = "";  //clear the string
+    sensorstring = "";
   }
 }
+
+// my old one
+// void salinLoopWithoutPC(float tempCForComp) {
+//   /* APPLY TEMPERATURE COMPENSATION FROM PROVIDED VALUE
+//      (from any sensor or constant)
+//      COMMAND SYNTAX FROM ATLAS SCIENTIFIC MANUAL:
+//      T,n <cr> | n = any value; floating point or int */ // was RT
+
+//   // Send temperature compensation + read command
+//   // Serial1.print("RT," + String(tempCForComp, 2) + "\r"); 
+//   // delay(50);
+
+//   // Serial1.print("R\r");  // Continuous sample on, we will send T in-situ temp compensation
+
+//   sensorstring.remove(0);                        // Removes all characters
+//   if (Serial1.available()) {                     //if a string from the Atlas Scientific product has been received in its entirety
+//     sensorstring = Serial1.readStringUntil(13);  //read the string until we see a <CR>
+//     if (isdigit(sensorstring[0]) == false) {     //if the first character in the string is a digit
+//       Serial.println(sensorstring);              //send that string to the PC's serial monitor
+//     } else                                       //if the first character in the string is NOT a digit
+//     {
+//       Serial.println(sensorstring);
+//       print_EC_data();  //then call this function
+//     }
+//     sensorstring = "";  //clear the string
+//   }
+// }
