@@ -17,10 +17,10 @@
 #define PRESS_ONLY 8    // 1.5" pvc continuous pressure 
 
 // for Mokil
-#define FLOAT_ONE 9
-#define FLOAT_TWO 10
-#define BRTL_ONE 11
-#define BRTL_TWO 12
+#define FLOAT_1 9
+#define FLOAT_2 10
+#define BRTL_1 11
+#define BRTL_2 12
 
 // for MIS
 #define MIS_1 13
@@ -28,5 +28,5 @@
 #define MIS_3 15
 
 //#############################
-#define SYSTEM_NAME MIS_1
+#define SYSTEM_NAME FLOAT_1
 //#############################

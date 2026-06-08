@@ -10,12 +10,12 @@
 // 6. Pair with open source niskin bottles and make a rosette 
 // 7. Open source fluorometer
 
-int deviceMode = 2;
+int deviceMode = 6;
 // 0 = fast as possible
 // 1 uses WAIT_TIME_ONE
 // 2 uses WAIT_TIME_TWO
 // 3 is charge mode 
-// 4 is BPR (samples at 4Hz first 20min of every hr)
+// 4 is BPR (samples at 4-5Hz first 20min of every hr)
 // 5 is continuous pressure recording at ~5Hz
 // 6 is surface float GPS-only at 10Hz (no RTC, GPS timestamp, Serial1) for ocean currents
 
@@ -24,35 +24,35 @@ bool displayBool    = false; // Adafruit Feather OLED Display
 int timeZone        = -7;    // time zone of commputer time, as program pulls time from computer to set RTC, but must convert
 
 // ###### SENSORS USED BY SYSTEM ######
-bool salinityBool = true;  // Atlas Scientific Salinity Sensor
-bool ecBool       = true;  // is value enabled on EZO circuit to send?
-bool sBool        = true;  // is value enabled on EZO circuit to send?
-bool tdsBool      = true;  // is value enabled on EZO circuit to send?
-bool sgBool       = true;  // is value enabled on EZO circuit to send?
+bool salinityBool = false;  // Atlas Scientific Salinity Sensor
+bool ecBool       = false;  // is value enabled on EZO circuit to send?
+bool sBool        = false;  // is value enabled on EZO circuit to send?
+bool tdsBool      = false;  // is value enabled on EZO circuit to send?
+bool sgBool       = false;  // is value enabled on EZO circuit to send?
 
 // ###### TEMPERATURE ######
 bool dallasTempBool = false;  // Dallas Temperature sensor
 bool thermTempBool  = false;  // Adafruit Thermistor
 bool pt100Bool      = false;  // Adafruit PT100
-bool brFastTempBool = true;  // Blue Robotics Fast Temperature, powered permanently via Qwiic/STEMMA QT 3.3V
+bool brFastTempBool = false;  // Blue Robotics Fast Temperature, powered permanently via Qwiic/STEMMA QT 3.3V
 
 // ###### PRESSURE ######
 bool pressDFBool  = false;  // DF Robot analog pressure sensor
 bool bar02Bool    = false;  // Blue Robotics Bar02
-bool bar30Bool    = true;  // Blue Robotics Bar30, all other systems use this one, except BPR
-bool bar100Bool   = false;  // Blue Robotics Bar100, STEEL only
+bool bar30Bool    = false;  // Blue Robotics Bar30, all other systems use this one, except BPR
+bool bar100Bool   = false;  // Blue Robotics Bar100, currently STEEL only
 
 // ###### UTILITY ######
 bool beaconBool = false;  // Surface float LED beacon
 
 // ###### OTHER SENSORS ######
 bool lightBool = false;  // Adafruit AS7262 6-channel Visible Light Sensor, only this on the TWOIN
-bool gpsBool   = false;  // Adafruit GPS FeatherWing (Serial1)
+bool gpsBool   = true;  // Adafruit GPS FeatherWing (Serial1)
                          // Do NOT enable gpsBool and salinityBool simultaneously (both use Serial1)
                          // Mode 6 automatically uses gpsSetup10Hz() — set gpsBool = true and deviceMode = 6
 
 #define WAIT_TIME_ONE 1   // 1 min (other: 5 min, 20 min, 30 min, etc.)
-#define WAIT_TIME_TWO 20  // 10 min (other: 1 hr, 12 hr, 24 hr, etc.)
+#define WAIT_TIME_TWO 10  // 10 min (other: 1 hr, 12 hr, 24 hr, etc.)
 #define WAIT_TIME_BPR 20  // First 20 min of the hour (for Bottom Pressure Recorder)
 
 // GPIO PIN SETTINGS ######
@@ -264,8 +264,8 @@ void setup() {
     if (serialDisplay) Serial.println("Mode 6: RTC skipped, GPS provides timestamp");
   }
 
-  if (serialDisplay) Serial.println("brFastTemp setup...");
   if (brFastTempBool) {
+  if (serialDisplay) Serial.println("brFastTemp setup...");
     brFastTempSetup();
       if (displayBool) {
         display.println("brFastTemp init");

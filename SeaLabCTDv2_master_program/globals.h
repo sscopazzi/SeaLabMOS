@@ -140,7 +140,7 @@ void writeDataRow() {
     myFile.print(sal, decimalPlaces); myFile.print(',');
     myFile.print(tds, decimalPlaces); myFile.print(',');
   } else {
-    myFile.print(",,,"); // preserve header alignment
+    myFile.print(",,"); // preserve header alignment
   }
 
   // ###### TEMPERATURE SENSORS ######
