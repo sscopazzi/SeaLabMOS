@@ -10,7 +10,7 @@
 // 6. Pair with open source niskin bottles and make a rosette 
 // 7. Open source fluorometer
 
-int deviceMode = 6;
+int deviceMode = 2;
 // 0 = fast as possible
 // 1 uses WAIT_TIME_ONE
 // 2 uses WAIT_TIME_TWO
@@ -32,7 +32,7 @@ bool sgBool       = false;  // is value enabled on EZO circuit to send?
 
 // ###### TEMPERATURE ######
 bool dallasTempBool = false;  // Dallas Temperature sensor
-bool thermTempBool  = false;  // Adafruit Thermistor
+bool thermTempBool  = true;  // Adafruit Thermistor
 bool pt100Bool      = false;  // Adafruit PT100
 bool brFastTempBool = false;  // Blue Robotics Fast Temperature, powered permanently via Qwiic/STEMMA QT 3.3V
 
@@ -47,7 +47,7 @@ bool beaconBool = false;  // Surface float LED beacon
 
 // ###### OTHER SENSORS ######
 bool lightBool = false;  // Adafruit AS7262 6-channel Visible Light Sensor, only this on the TWOIN
-bool gpsBool   = true;  // Adafruit GPS FeatherWing (Serial1)
+bool gpsBool   = false;  // Adafruit GPS FeatherWing (Serial1)
                          // Do NOT enable gpsBool and salinityBool simultaneously (both use Serial1)
                          // Mode 6 automatically uses gpsSetup10Hz() — set gpsBool = true and deviceMode = 6
 
@@ -140,6 +140,7 @@ void setup() {
     // while (!Serial) { delay(10); }  // THIS MAKES IT HANG SO NFG
     delay(5000);
     Serial.println("SYSTEM STARTUP");
+    Serial.print("deviceMode = "); Serial.println(deviceMode);  // ground truth
   }
 
   analogReadResolution(12);  // specify in code for proper battV and thermistor reference
@@ -471,8 +472,9 @@ void runMode1and2() {
 
   if (salinityBool) {
     digitalWrite(4, HIGH);
-    delay(1000);                      // boot time
-    salinLoopWithoutPC(brFastTemp);   // sends RT,temp + reads
+    delay(2000);   // boot time, 1200 is NOT enough to get an accurate salinity value 
+    // salinLoopWithoutPCAndTempComp(brFastTemp);   // sends RT,temp + reads
+    salinLoopWithoutPCNoTempComp();
     digitalWrite(4, LOW);
   }
 

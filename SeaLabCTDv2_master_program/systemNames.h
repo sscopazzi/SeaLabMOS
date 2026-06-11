@@ -27,6 +27,8 @@
 #define MIS_2 14
 #define MIS_3 15
 
+#define WEATHER_STATION 16
+
 //#############################
-#define SYSTEM_NAME FLOAT_1
+#define SYSTEM_NAME GREEN
 //#############################

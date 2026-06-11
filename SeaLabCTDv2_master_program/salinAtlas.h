@@ -19,34 +19,53 @@ extern bool sBool;
 inline void salinSetup() {
   Serial1.begin(SALINITY_BAUD);       //set baud rate for software serial port_3 to 9600 (default of sensor)
   inputstring.reserve(10);   //set aside some bytes for receiving data from the PC
-  sensorstring.reserve(30);  //set aside some bytes for receiving data from Atlas Scientific product
+  sensorstring.reserve(50);  //set aside some bytes for receiving data from Atlas Scientific product
   pinMode(SALINITY_ENABLE_PIN, OUTPUT);   // enable pin for salinity board
   digitalWrite(SALINITY_ENABLE_PIN, LOW); // turn off at system start
 }
 
+inline void print_EC_data(void) {
+  char sensorstring_array[50];  // was 30 — EC alone can be 8+ chars at high conductivity
+  char *EC;
+  char *TDS;
+  char *SAL;
+  char *GRAV;
 
-inline void print_EC_data(void) {  //this function will pars the string
+  sensorstring.toCharArray(sensorstring_array, 50);  // match the array size
+  EC   = strtok(sensorstring_array, ",");
+  TDS  = strtok(NULL, ",");
+  SAL  = strtok(NULL, ",");
+  GRAV = strtok(NULL, ",");
 
-  char sensorstring_array[30];  //we make a char array
-  char *EC;                     //char pointer used in string parsing
-  char *TDS;                    //char pointer used in string parsing
-  char *SAL;                    //char pointer used in string parsing
-  char *GRAV;                   //char pointer used in string parsing
-  // float f_ec;                                         //used to hold a floating point number that is the EC
-
-  // sensorstring.trim();
-  sensorstring.toCharArray(sensorstring_array, 30);  //convert the string to a char array
-  // Serial.println(sensorstring_array);              //debugging
-  EC = strtok(sensorstring_array, ",");  //let's pars the array at each comma
-  TDS = strtok(NULL, ",");               //let's pars the array at each comma
-  SAL = strtok(NULL, ",");               //let's pars the array at each comma
-  GRAV = strtok(NULL, ",");              //let's pars the array at each comma
-
-  ec = atof(EC);      //uncomment this line to convert the char to a float
-  sal = atof(SAL);    //uncomment this line to convert the char to a float
-  tds = atof(TDS);    //uncomment this line to convert the char to a float
-  grav = atof(GRAV);  //uncomment this line to convert the char to a float
+  ec   = (EC   != NULL) ? atof(EC)   : 999.0;
+  sal  = (SAL  != NULL) ? atof(SAL)  : 999.0;
+  tds  = (TDS  != NULL) ? atof(TDS)  : 999.0;
+  grav = (GRAV != NULL) ? atof(GRAV) : 999.0;
 }
+
+/// OLD
+// inline void print_EC_data(void) {  //this function will pars the string
+
+//   char sensorstring_array[30];  //we make a char array
+//   char *EC;                     //char pointer used in string parsing
+//   char *TDS;                    //char pointer used in string parsing
+//   char *SAL;                    //char pointer used in string parsing
+//   char *GRAV;                   //char pointer used in string parsing
+//   // float f_ec;                                         //used to hold a floating point number that is the EC
+
+//   // sensorstring.trim();
+//   sensorstring.toCharArray(sensorstring_array, 30);  //convert the string to a char array
+//   // Serial.println(sensorstring_array);              //debugging
+//   EC = strtok(sensorstring_array, ",");  //let's pars the array at each comma
+//   TDS = strtok(NULL, ",");               //let's pars the array at each comma
+//   SAL = strtok(NULL, ",");               //let's pars the array at each comma
+//   GRAV = strtok(NULL, ",");              //let's pars the array at each comma
+
+//   ec = atof(EC);      //uncomment this line to convert the char to a float
+//   sal = atof(SAL);    //uncomment this line to convert the char to a float
+//   tds = atof(TDS);    //uncomment this line to convert the char to a float
+//   grav = atof(GRAV);  //uncomment this line to convert the char to a float
+// }
 
 // inline void print_EC_data(void) {
 //     sensorstring.trim();  // remove leading/trailing whitespace and CR/LF
@@ -103,7 +122,7 @@ void debugSerial1Raw() {
     }
 }
 
-void salinLoopWithoutPC(float tempCForComp) {
+void salinLoopWithoutPCAndTempComp(float tempCForComp) {
   while (Serial1.available()) Serial1.read();          // flush boot/leftover chatter
 
   Serial1.print("RT," + String(tempCForComp, 2) + "\r"); // read WITH temp compensation
@@ -111,6 +130,24 @@ void salinLoopWithoutPC(float tempCForComp) {
   unsigned long t0 = millis();                          // wait for the reading (~600ms)
   while (!Serial1.available() && (millis() - t0) < 1500) { yield(); }
 
+  sensorstring = "";
+  if (Serial1.available()) {
+    sensorstring = Serial1.readStringUntil(13);
+    if (isdigit(sensorstring[0]) == false) {
+      Serial.println(sensorstring);
+    } else {
+      Serial.println(sensorstring);
+      print_EC_data();
+    }
+    sensorstring = "";
+  }
+}
+
+void salinLoopWithoutPCNoTempComp() {
+  while (Serial1.available()) Serial1.read();          // flush boot/leftover chatter
+  Serial1.print("R\r");                                 // read WITHOUT setting temp comp
+  unsigned long t0 = millis();                          // wait for the reading (~600ms)
+  while (!Serial1.available() && (millis() - t0) < 1500) { yield(); }
   sensorstring = "";
   if (Serial1.available()) {
     sensorstring = Serial1.readStringUntil(13);
