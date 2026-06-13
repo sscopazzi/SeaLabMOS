@@ -78,6 +78,10 @@ void readBatteryVoltage() {
     v *= 1.050;
   #elif SYSTEM_NAME == FLOAT_2
     v *= 1.064;
+  #elif SYSTEM_NAME == BRTL_1
+    v *= 1.030;
+  #elif SYSTEM_NAME == BRTL_2
+    v *= 1.052;
   #else
     // warn in output dialog if unrecongized name
     // 1.053 is the average of all platform values

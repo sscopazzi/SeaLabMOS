@@ -30,5 +30,5 @@
 #define WEATHER_STATION 16
 
 //#############################
-#define SYSTEM_NAME GREEN
+#define SYSTEM_NAME BRTL_2
 //#############################

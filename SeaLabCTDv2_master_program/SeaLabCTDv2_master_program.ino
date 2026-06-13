@@ -32,9 +32,9 @@ bool sgBool       = false;  // is value enabled on EZO circuit to send?
 
 // ###### TEMPERATURE ######
 bool dallasTempBool = false;  // Dallas Temperature sensor
-bool thermTempBool  = true;  // Adafruit Thermistor
+bool thermTempBool  = false;  // Adafruit Thermistor
 bool pt100Bool      = false;  // Adafruit PT100
-bool brFastTempBool = false;  // Blue Robotics Fast Temperature, powered permanently via Qwiic/STEMMA QT 3.3V
+bool brFastTempBool = true;  // Blue Robotics Fast Temperature, powered permanently via Qwiic/STEMMA QT 3.3V
 
 // ###### PRESSURE ######
 bool pressDFBool  = false;  // DF Robot analog pressure sensor
