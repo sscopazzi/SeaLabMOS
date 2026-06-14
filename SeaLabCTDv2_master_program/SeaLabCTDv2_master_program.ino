@@ -34,12 +34,12 @@ bool sgBool       = false;  // is value enabled on EZO circuit to send?
 bool dallasTempBool = false;  // Dallas Temperature sensor
 bool thermTempBool  = false;  // Adafruit Thermistor
 bool pt100Bool      = false;  // Adafruit PT100
-bool brFastTempBool = false;  // Blue Robotics Fast Temperature, powered permanently via Qwiic/STEMMA QT 3.3V
+bool brFastTempBool = true;  // Blue Robotics Fast Temperature, powered permanently via Qwiic/STEMMA QT 3.3V
 
 // ###### PRESSURE ######
 bool pressDFBool  = false;  // DF Robot analog pressure sensor
 bool bar02Bool    = false;  // Blue Robotics Bar02
-bool bar30Bool    = true;  // Blue Robotics Bar30, all other systems use this one, except BPR
+bool bar30Bool    = false;  // Blue Robotics Bar30, all other systems use this one, except BPR
 bool bar100Bool   = false;  // Blue Robotics Bar100, currently STEEL only
 
 // ###### UTILITY ######
@@ -393,7 +393,7 @@ void runMode0() {
   if (dallasTempBool) { dallasTemp = getDallasTemp(); }
   if (brFastTempBool) { brFastTempSample(); }  // Immeditely before salinity as salinity uses temperature
   
-  salinLoopWithPC();
+  if (salinityBool) { salinLoopWithPC(); }
   // salinLoopWithoutPC(brFastTemp);
 
   // uint32_t saltTime = millis();

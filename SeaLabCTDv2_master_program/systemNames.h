@@ -30,7 +30,7 @@
 #define PRESS_ONLY_SCH80 16 // schedule 80 for deeper crush depth
 
 //#############################
-#define SYSTEM_NAME BRTL_2
+#define SYSTEM_NAME BRTL_1
 //#############################
 
 // Map the numeric SYSTEM_NAME to a readable string for filenames/logs.
