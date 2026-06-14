@@ -10,7 +10,7 @@
 // 6. Pair with open source niskin bottles and make a rosette 
 // 7. Open source fluorometer
 
-int deviceMode = 2;
+int deviceMode = 0;
 // 0 = fast as possible
 // 1 uses WAIT_TIME_ONE
 // 2 uses WAIT_TIME_TWO
@@ -34,12 +34,12 @@ bool sgBool       = false;  // is value enabled on EZO circuit to send?
 bool dallasTempBool = false;  // Dallas Temperature sensor
 bool thermTempBool  = false;  // Adafruit Thermistor
 bool pt100Bool      = false;  // Adafruit PT100
-bool brFastTempBool = true;  // Blue Robotics Fast Temperature, powered permanently via Qwiic/STEMMA QT 3.3V
+bool brFastTempBool = false;  // Blue Robotics Fast Temperature, powered permanently via Qwiic/STEMMA QT 3.3V
 
 // ###### PRESSURE ######
 bool pressDFBool  = false;  // DF Robot analog pressure sensor
 bool bar02Bool    = false;  // Blue Robotics Bar02
-bool bar30Bool    = false;  // Blue Robotics Bar30, all other systems use this one, except BPR
+bool bar30Bool    = true;  // Blue Robotics Bar30, all other systems use this one, except BPR
 bool bar100Bool   = false;  // Blue Robotics Bar100, currently STEEL only
 
 // ###### UTILITY ######
@@ -139,7 +139,8 @@ void setup() {
     Serial.begin(SYSTEM_BAUD);
     // while (!Serial) { delay(10); }  // THIS MAKES IT HANG SO NFG
     delay(5000);
-    Serial.println("SYSTEM STARTUP");
+    readBatteryVoltage();
+    Serial.print("SYSTEM STARTUP --> voltage is"); Serial.print(battV); Serial.println(" volts");
     Serial.print("deviceMode = "); Serial.println(deviceMode);  // ground truth
   }
 

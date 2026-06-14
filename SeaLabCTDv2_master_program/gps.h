@@ -9,16 +9,23 @@
 //     Used alongside other sensors. GPS timestamp supplements RTC.
 //
 //   Mode 6 — Surface Float 10 Hz:
-//     Serial1, 57600 baud, RMC only, 10 Hz
+//     Serial1, 57600 baud, RMC+GGA, 10 Hz
 //     GPS is the ONLY sensor. No RTC needed — GPS provides timestamp.
-//     Logs lat, lon, speed, angle, fix quality, sats at ~10 Hz to SD.
+//     Logs lat, lon, speed, angle, fix quality, sats, altitude at ~10 Hz.
 //     Baud MUST be raised to 57600 first at 9600, then re-opened at 57600.
-//     RMC only — altitude dropped (not in RMC sentence).
+//     GGA is kept (not dropped): it provides satellite count and altitude.
 //
 // ⚠️  SERIAL PORT NOTE:
 //     GPS FeatherWing is hardwired to Serial1 (GPIO0/GPIO1).
 //     Do not enable salinityBool (Atlas EZO, also Serial1) at the same time.
 //     In mode 6, salinityBool should always be false.
+//
+// ⚠️  SPEED UNITS:
+//     NMEA RMC reports speed-over-ground in KNOTS. gpsSpeed is converted
+//     to m/s here (× KNOTS_TO_MS) so the logged value matches its column
+//     name (gpsSpeed_ms). If you want knots in the log, drop the multiply
+//     and rename the column to gpsSpeed_kn — do not log raw GPS.speed as
+//     "_ms", that is a 1.94384x overestimate.
 // /***************************************************************/
 
 #include <Adafruit_GPS.h>  // by Adafruit
@@ -27,9 +34,13 @@
 // Update this each year. Used to reject GPS week-rollover timestamps
 // (e.g. year = 80 for 1980) that look valid but aren't.
 // GPS.year is 2-digit, so GPS_PRESENT_YEAR_2DIGIT = 26 means 2026.
+// Accepted year range below is 2026–2079 (2-digit 26–79).
 // ---------------------------------------------------------------
 #define GPS_PRESENT_YEAR      2026
 #define GPS_PRESENT_YEAR_2DIGIT (GPS_PRESENT_YEAR % 100)  // = 26
+
+// Knots → m/s. 1 knot = 0.514444 m/s (1 m/s = 1.94384 knots).
+#define KNOTS_TO_MS 0.514444f
 
 #define GPS_SERIAL Serial1
 
@@ -44,8 +55,8 @@ extern bool     serialDisplay;
 
 extern float    gpsLat;    // decimal degrees, positive = North
 extern float    gpsLon;    // decimal degrees, positive = East
-extern float    gpsAlt;    // meters above MSL (GGA only, 0 in mode 6)
-extern float    gpsSpeed;  // knots
+extern float    gpsAlt;    // meters above MSL (from GGA; noisy on a surface float)
+extern float    gpsSpeed;  // m/s (converted from GPS knots — see SPEED UNITS note)
 extern float    gpsAngle;  // degrees true
 extern bool     gpsFix;
 extern uint8_t  gpsSats;
@@ -141,8 +152,8 @@ inline void gpsPoll() {
     gpsLat   = nmeaToDeg(GPS.latitude,  GPS.lat);
     gpsLon   = nmeaToDeg(GPS.longitude, GPS.lon);
     gpsAlt   = GPS.altitude;
-    gpsSpeed = GPS.speed;      // knots
-    gpsAngle = GPS.angle;      // degrees true
+    gpsSpeed = GPS.speed * KNOTS_TO_MS;   // knots → m/s
+    gpsAngle = GPS.angle;                 // degrees true
 
     _gpsNewFix = true;
   }
@@ -161,13 +172,35 @@ inline bool gpsHasNewFix() {
 // genuine current-era timestamp from satellites.
 //
 // GPS.year is a 2-digit value. The MTK3339 week-rollover bug returns
-// year=80 (meaning 1980, not 2080). We explicitly reject anything
-// outside the range 26–99 (i.e. 2026–2099).
-// Update GPS_PRESENT_YEAR at the top of this file each year if needed.
+// year=80 (meaning 1980, not 2080); a cold module also emits year=00
+// with month=00/day=00. We accept only 26–79 (2026–2079) with a sane
+// month/day. Update GPS_PRESENT_YEAR at the top of this file each year.
 // ---------------------------------------------------------------
 inline bool gpsTimestampValid() {
   return (GPS.year >= GPS_PRESENT_YEAR_2DIGIT &&
           GPS.year <  80 &&          // reject 1980 rollover (year==80)
           GPS.month >= 1 && GPS.month <= 12 &&
           GPS.day   >= 1 && GPS.day   <= 31);
+}
+
+// ---------------------------------------------------------------
+// gpsRecordValid() — call this in the logger BEFORE writing a row.
+//
+// This is the guard that would have kept the 540 garbage rows
+// (2001-00-00 timestamps, gpsSpeed_ms = 12214, gpsLon == gpsLat)
+// out of the surface-float CSV. gpsPoll() builds gpsTimestamp on
+// every sentence, even bad ones, so the logger must gate writes on
+// a real fix + a valid timestamp + a sane speed.
+//
+//   if (gpsHasNewFix() && gpsRecordValid()) { writeRow(); }
+//
+// MAX_SOG_MS: a drifting surface float is not exceeding ~10 m/s;
+// raise it if you ever tow the package.
+// ---------------------------------------------------------------
+#define MAX_SOG_MS 10.0f
+
+inline bool gpsRecordValid() {
+  return (gpsFix &&
+          gpsTimestampValid() &&
+          gpsSpeed >= 0.0f && gpsSpeed < MAX_SOG_MS);
 }

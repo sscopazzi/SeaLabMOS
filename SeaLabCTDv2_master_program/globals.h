@@ -20,7 +20,7 @@
 // unsigned long lastOledMs = 0;       // Tracks last OLED update time
 // const int oledInterval = 1000;       // Interval between display updates
 
-String header = "time,deviceMode,battV,ec,sal,tds,dallasTemp,thermTemp,pt100Temp,brFastTemp,lt450,lt500,lt550,lt570,lt600,lt650,brPressure,brTemperature,brDepth,gpsLat,gpsLon,gpsAlt,gpsSpeed,gpsFix,gpsSats";
+String header = "time,deviceMode,battV,ec,sal,tds,dallasTemp,thermTemp,pt100Temp,brFastTemp,lt450,lt500,lt550,lt570,lt600,lt650,brPressure,brTemperature,brDepth,gpsLat,gpsLon,gpsAlt,gpsSpeed_ms,gpsFix,gpsSats";
 String timestamp_filename = "";   // YYYY-MM-DD hh-mm-ss in Mode 0 and YYYY-MM-DD in Modes 1 and 2
 
 RTC_DS3231 rtc;
@@ -72,7 +72,7 @@ float lt450, lt500, lt550, lt570, lt600, lt650; // 6-channel light
 float   gpsLat   = 0.0;   // decimal degrees, positive = North
 float   gpsLon   = 0.0;   // decimal degrees, positive = East
 float   gpsAlt   = 0.0;   // meters above MSL
-float   gpsSpeed = 0.0;   // knots
+float   gpsSpeed = 0.0;   // m/s
 float   gpsAngle = 0.0;   // degrees true
 bool    gpsFix   = false;
 uint8_t gpsSats  = 0;
@@ -140,7 +140,7 @@ void writeDataRow() {
     myFile.print(sal, decimalPlaces); myFile.print(',');
     myFile.print(tds, decimalPlaces); myFile.print(',');
   } else {
-    myFile.print(",,"); // preserve header alignment
+    myFile.print(",,,"); // preserve header alignment
   }
 
   // ###### TEMPERATURE SENSORS ######
@@ -174,7 +174,7 @@ void writeDataRow() {
     myFile.print(brTemperature, decimalPlaces);    myFile.print(',');
     myFile.print(brDepth,       decimalPlaces);
   } else {
-    myFile.print(",,,"); // preserve alignment
+    myFile.print(",,"); // preserve alignment
   }
 
   // ###### GPS ######
@@ -196,7 +196,7 @@ void writeDataRow() {
 
 // Mode 6 — GPS-only surface float, 10 Hz.
 // Uses GPS timestamp directly (no RTC). Minimal columns for fast SD writes.
-// Header: gpsTime,gpsFix,gpsSats,gpsLat,gpsLon,gpsSpeed_kn,gpsAngle_deg,gpsAlt_m
+// Header: gpsTime,gpsFix,gpsSats,gpsLat,gpsLon,gpsSpeed_ms,gpsAngle_deg,gpsAlt_m
 extern char gpsTimestamp[];  // defined in gps.h
 void writeDataRowMode6() {
   myFile = SD.open(timestamp_filename + ".csv", FILE_WRITE);
@@ -270,31 +270,9 @@ static inline DateTime nextBprBoundary(const DateTime& now) {
 }
 
 DateTime getNextAlarm(DateTime now, uint8_t waitTimeMinutes) {
-    uint8_t currentMinute = now.minute();
-    uint8_t currentHour = now.hour();
-    uint8_t currentDay = now.day();
-    uint8_t currentMonth = now.month();
-    uint16_t currentYear = now.year();
-
-    // Compute next multiple of waitTimeMinutes after currentMinute
-    uint8_t nextMinute = ((currentMinute / waitTimeMinutes) + 1) * waitTimeMinutes;
-    uint8_t nextHour = currentHour;
-    uint8_t nextDay = currentDay;
-    uint8_t nextMonth = currentMonth;
-    uint16_t nextYear = currentYear;
-
-    if (nextMinute >= 60) {
-        nextMinute = nextMinute % 60;
-        nextHour += 1;
-        if (nextHour >= 24) {
-            nextHour = 0;
-            nextDay += 1;
-            // Very basic day/month rollover (not accounting for months < 31)
-            // Use RTC library DateTime add functions for full correctness
-        }
-    }
-
-    return DateTime(nextYear, nextMonth, nextDay, nextHour, nextMinute, 0);
+    uint32_t period = (uint32_t)waitTimeMinutes * 60UL;   // seconds
+    uint32_t next   = ((now.unixtime() / period) + 1) * period;
+    return DateTime(next);                                // seconds = 0, all rollovers correct
 }
 
 inline void setRtcCompileTimeUTC() {

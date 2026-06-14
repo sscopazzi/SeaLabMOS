@@ -16,18 +16,18 @@
 // for UH
 #define PRESS_ONLY 8    // 1.5" pvc continuous pressure 
 
-// for Mokil
+// for Mokil - two floats and two Temp Loggers with Blue Robotics 
 #define FLOAT_1 9
 #define FLOAT_2 10
 #define BRTL_1 11
 #define BRTL_2 12
 
-// for MIS
+// for MIS - all CTDs
 #define MIS_1 13
 #define MIS_2 14
 #define MIS_3 15
 
-#define WEATHER_STATION 16
+#define PRESS_ONLY_SCH80 16 // schedule 80 for deeper crush depth
 
 //#############################
 #define SYSTEM_NAME BRTL_2

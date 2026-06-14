@@ -8,7 +8,7 @@ float readBatteryVoltage() {
   v *= 2.0;        // Undo the voltage divider (assumes 1:1 divider)
 
   // CORRECTION FACTOR FOR USE IN MAIN PROGRAM
-  v *= 1.030;
+  v *= 1.045;
   return v;
 }
 
