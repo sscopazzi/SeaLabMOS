@@ -23,6 +23,10 @@
 String header = "time,deviceMode,battV,ec,sal,tds,dallasTemp,thermTemp,pt100Temp,brFastTemp,lt450,lt500,lt550,lt570,lt600,lt650,brPressure,brTemperature,brDepth,gpsLat,gpsLon,gpsAlt,gpsSpeed_ms,gpsFix,gpsSats";
 String timestamp_filename = "";   // YYYY-MM-DD hh-mm-ss in Mode 0 and YYYY-MM-DD in Modes 1 and 2
 
+// Defined in systemNames.h (included after this file in the .ino).
+// Forward-declared here so updateFilenameAndHeader() can prefix filenames.
+const char* systemNameStr();
+
 RTC_DS3231 rtc;
 volatile bool rtcAlarmFired = false;
 DateTime nextSample;
@@ -107,7 +111,7 @@ static inline void updateFilenameAndHeader() {
   snprintf(dateOnly, sizeof(dateOnly), "%04d-%02d-%02d",
            currentTime.year(), currentTime.month(), currentTime.day());
 
-  String dayname = String(dateOnly);
+  String dayname = String(systemNameStr()) + "_" + String(dateOnly);
 
   // Track current day-based filename
   if (timestamp_filename != dayname) {

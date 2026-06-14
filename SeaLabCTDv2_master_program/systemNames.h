@@ -32,3 +32,29 @@
 //#############################
 #define SYSTEM_NAME BRTL_2
 //#############################
+
+// Map the numeric SYSTEM_NAME to a readable string for filenames/logs.
+// Single source of truth: change only the #define SYSTEM_NAME line above and
+// this follows automatically. Keep the case labels in sync with the #defines.
+inline const char* systemNameStr() {
+  switch (SYSTEM_NAME) {
+    case GREEN:            return "GREEN";
+    case BLUE:             return "BLUE";
+    case ORANGE:           return "ORANGE";
+    case WHITE:            return "WHITE";
+    case NALGENE:          return "NALGENE";
+    case STEEL:            return "STEEL";
+    case TWOIN:            return "TWOIN";
+    case BPR:              return "BPR";
+    case PRESS_ONLY:       return "PRESS_ONLY";
+    case FLOAT_1:          return "FLOAT_1";
+    case FLOAT_2:          return "FLOAT_2";
+    case BRTL_1:           return "BRTL_1";
+    case BRTL_2:           return "BRTL_2";
+    case MIS_1:            return "MIS_1";
+    case MIS_2:            return "MIS_2";
+    case MIS_3:            return "MIS_3";
+    case PRESS_ONLY_SCH80: return "PRESS_ONLY_SCH80";
+    default:               return "UNKNOWN";
+  }
+}

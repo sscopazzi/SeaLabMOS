@@ -351,6 +351,7 @@ void setup() {
     // full timestamp for fast mode or PRESS_ONLY mode
     timestamp_filename = currentTime.timestamp(DateTime::TIMESTAMP_FULL);
     timestamp_filename.replace(":", "-");
+    timestamp_filename = String(systemNameStr()) + "_" + timestamp_filename;
     if (serialDisplay) { Serial.println(timestamp_filename); }
     myFile = SD.open(timestamp_filename + ".csv", FILE_WRITE);
     myFile.println(header);
@@ -622,7 +623,7 @@ void runMode6() {
     snprintf(fname, sizeof(fname), "GPS-20%02d-%02d-%02dT%02d-%02d-%02d",
              GPS.year, GPS.month, GPS.day,
              GPS.hour, GPS.minute, GPS.seconds);
-    timestamp_filename = String(fname);
+    timestamp_filename = String(systemNameStr()) + "_" + String(fname);
 
     myFile = SD.open(timestamp_filename + ".csv", FILE_WRITE);
     myFile.println("gpsTime,gpsFix,gpsSats,gpsLat,gpsLon,gpsSpeed_ms,gpsAngle_deg,gpsAlt_m");
