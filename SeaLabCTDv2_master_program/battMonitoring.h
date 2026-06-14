@@ -82,11 +82,13 @@ void readBatteryVoltage() {
     v *= 1.030;
   #elif SYSTEM_NAME == BRTL_2
     v *= 1.052;
+  #elif SYSTEM_NAME == PRESS_ONLY_SCH80
+    v *= 1.045;
   #else
     // warn in output dialog if unrecongized name
     // 1.053 is the average of all platform values
-    #warning "Unknown SYSTEM_NAME; using default correction factor of 1.053"
-    v *= 1.053;
+    #warning "Unknown SYSTEM_NAME; using default correction factor of 1.05"
+    v *= 1.05;
   #endif
 
   battV = v;
