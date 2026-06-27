@@ -10,18 +10,18 @@
 // 6. Pair with open source niskin bottles and make a rosette 
 // 7. Open source fluorometer
 
-int deviceMode = 0;
+int deviceMode = 2;
 // 0 = fast as possible
 // 1 uses WAIT_TIME_ONE
 // 2 uses WAIT_TIME_TWO
 // 3 is charge mode 
 // 4 is BPR (samples at 4-5Hz first 20min of every hr)
 // 5 is continuous pressure recording at ~5Hz
-// 6 is surface float GPS-only at 10Hz (no RTC, GPS timestamp, Serial1) for ocean currents
+// 6 is surface float (or location recorder - it doesn't have to float) GPS-only at 10Hz (no RTC, GPS timestamp, Serial1) for ocean currents / paths
 
 bool serialDisplay  = true;  // Set to false to disable all Serial prints after the setup 
 bool displayBool    = false; // Adafruit Feather OLED Display
-int timeZone        = -7;    // time zone of commputer time, as program pulls time from computer to set RTC, but must convert
+int timeZone        = -8;    // time zone of commputer time, as program pulls time from computer to set RTC, but must convert
 
 // ###### SENSORS USED BY SYSTEM ######
 bool salinityBool = false;  // Atlas Scientific Salinity Sensor
@@ -194,6 +194,7 @@ void setup() {
 
   if (gpsBool) {
     if (deviceMode == 6) {
+      #warning "Attempting to start GPS - MAKE SURE THIS IS A SURFACE FLOAT / LOCATION LOGGER ONLY" 
       gpsSetup10Hz();  // 57600 baud, RMC only, 10 Hz — no RTC needed
     } else {
       gpsSetup();      // 9600 baud, RMC+GGA, 1 Hz
@@ -247,7 +248,7 @@ void setup() {
     // When time needs to be re-set on a previously configured device, the
     // following line sets the RTC to the date & time this sketch was compiled
     // rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); // time of computer, no UTC
-    setRtcCompileTimeUTC();
+    // setRtcCompileTimeUTC();
 
     rtc.clearAlarm(1);
     delay(2);  // tiny debounce delay for some DS3231 boards, not 100% sure if needed
@@ -610,6 +611,8 @@ void runMode6() {
         static unsigned long _lastPrint = 0;
         if (millis() - _lastPrint >= 2000) {
           Serial.println("Waiting for GPS timestamp...");
+          readBatteryVoltage();
+          Serial.print("Battery Voltage:"); Serial.println(battV,2);
           _lastPrint = millis();
         }
       }
@@ -626,7 +629,7 @@ void runMode6() {
     timestamp_filename = String(systemNameStr()) + "_" + String(fname);
 
     myFile = SD.open(timestamp_filename + ".csv", FILE_WRITE);
-    myFile.println("gpsTime,gpsFix,gpsSats,gpsLat,gpsLon,gpsSpeed_ms,gpsAngle_deg,gpsAlt_m");
+    myFile.println("gpsTime,gpsFix,gpsSats,gpsLat,gpsLon,gpsSpeed_ms,gpsAngle_deg,gpsAlt_m,battV");
     myFile.close();
 
     // Turn NeoPixel off — red LED pattern takes over from here
@@ -647,6 +650,7 @@ void runMode6() {
   tickMode6LED();  // non-blocking two-pip pattern on red onboard LED
 
   if (gpsHasNewFix()) {
+    readBatteryVoltage();
     writeDataRowMode6();
 
     if (serialDisplay) {
@@ -657,7 +661,8 @@ void runMode6() {
       Serial.print(" Spd:");    Serial.print(gpsSpeed * 0.514444f, 3);
       Serial.print("m/s Hdg:"); Serial.print(gpsAngle, 2);
       Serial.print(" Alt:");    Serial.print(gpsAlt,   1);
-      Serial.print("m Sats:");  Serial.println(gpsSats);
+      Serial.print("m Sats:");  Serial.print(gpsSats);
+      Serial.print("battV");    Serial.println(battV,2);
     }
   }
   yield();

@@ -136,7 +136,7 @@ void writeDataRow() {
   // IN EVERY FILE
   myFile.print(currentTime.timestamp(DateTime::TIMESTAMP_FULL)); myFile.print(',');
   myFile.print(deviceMode);                                     myFile.print(',');
-  myFile.print(battV,           decimalPlaces); myFile.print(',');
+  myFile.print(battV,decimalPlaces); myFile.print(',');
 
   // ###### SALINITY ######
   if (salinityBool) {
@@ -200,18 +200,19 @@ void writeDataRow() {
 
 // Mode 6 — GPS-only surface float, 10 Hz.
 // Uses GPS timestamp directly (no RTC). Minimal columns for fast SD writes.
-// Header: gpsTime,gpsFix,gpsSats,gpsLat,gpsLon,gpsSpeed_ms,gpsAngle_deg,gpsAlt_m
+// Header: gpsTime,gpsFix,gpsSats,gpsLat,gpsLon,gpsSpeed_ms,gpsAngle_deg,gpsAlt_m,battV
 extern char gpsTimestamp[];  // defined in gps.h
 void writeDataRowMode6() {
   myFile = SD.open(timestamp_filename + ".csv", FILE_WRITE);
-  myFile.print(gpsTimestamp);            myFile.print(',');
+  myFile.print(gpsTimestamp);           myFile.print(',');
   myFile.print(gpsFix   ? 1 : 0);       myFile.print(',');
-  myFile.print(gpsSats);                 myFile.print(',');
+  myFile.print(gpsSats);                myFile.print(',');
   myFile.print(gpsLat,  6);             myFile.print(',');  // 6 dp = ~110mm on Earth
   myFile.print(gpsLon,  6);             myFile.print(',');
   myFile.print(gpsSpeed, 2);            myFile.print(',');
   myFile.print(gpsAngle, 2);            myFile.print(',');
-  myFile.print(gpsAlt,   1);
+  myFile.print(gpsAlt,   1);            myFile.print(',');
+  myFile.print(battV,decimalPlaces); 
   myFile.println();
   myFile.close();
 }
