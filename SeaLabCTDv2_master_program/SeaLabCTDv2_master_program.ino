@@ -10,7 +10,7 @@
 // 6. Pair with open source niskin bottles and make a rosette 
 // 7. Open source fluorometer
 
-int deviceMode = 2;
+int deviceMode = 0;
 // 0 = fast as possible
 // 1 uses WAIT_TIME_ONE
 // 2 uses WAIT_TIME_TWO
@@ -24,11 +24,11 @@ bool displayBool    = false; // Adafruit Feather OLED Display
 int timeZone        = -8;    // time zone of commputer time, as program pulls time from computer to set RTC, but must convert
 
 // ###### SENSORS USED BY SYSTEM ######
-bool salinityBool = false;  // Atlas Scientific Salinity Sensor
-bool ecBool       = false;  // is value enabled on EZO circuit to send?
-bool sBool        = false;  // is value enabled on EZO circuit to send?
-bool tdsBool      = false;  // is value enabled on EZO circuit to send?
-bool sgBool       = false;  // is value enabled on EZO circuit to send?
+bool salinityBool = true;  // Atlas Scientific Salinity Sensor
+bool ecBool       = true;  // is value enabled on EZO circuit to send?
+bool sBool        = true;  // is value enabled on EZO circuit to send?
+bool tdsBool      = true;  // is value enabled on EZO circuit to send?
+bool sgBool       = true;  // is value enabled on EZO circuit to send?
 
 // ###### TEMPERATURE ######
 bool dallasTempBool = false;  // Dallas Temperature sensor
@@ -39,7 +39,7 @@ bool brFastTempBool = true;  // Blue Robotics Fast Temperature, powered permanen
 // ###### PRESSURE ######
 bool pressDFBool  = false;  // DF Robot analog pressure sensor
 bool bar02Bool    = false;  // Blue Robotics Bar02
-bool bar30Bool    = false;  // Blue Robotics Bar30, all other systems use this one, except BPR
+bool bar30Bool    = true;  // Blue Robotics Bar30, all other systems use this one, except BPR
 bool bar100Bool   = false;  // Blue Robotics Bar100, currently STEEL only
 
 // ###### UTILITY ######
@@ -194,7 +194,6 @@ void setup() {
 
   if (gpsBool) {
     if (deviceMode == 6) {
-      #warning "Attempting to start GPS - MAKE SURE THIS IS A SURFACE FLOAT / LOCATION LOGGER ONLY" 
       gpsSetup10Hz();  // 57600 baud, RMC only, 10 Hz — no RTC needed
     } else {
       gpsSetup();      // 9600 baud, RMC+GGA, 1 Hz
