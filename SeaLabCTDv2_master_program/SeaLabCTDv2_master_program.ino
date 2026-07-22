@@ -10,13 +10,13 @@
 // 6. Pair with open source niskin bottles and make a rosette 
 // 7. Open source fluorometer
 
-int deviceMode = 0;
+int deviceMode = 5;
 // 0 = fast as possible
 // 1 uses WAIT_TIME_ONE
 // 2 uses WAIT_TIME_TWO
 // 3 is charge mode 
 // 4 is BPR (samples at 4-5Hz first 20min of every hr)
-// 5 is continuous pressure recording at ~5Hz
+// 5 is continuous pressure recording 
 // 6 is surface float (or location recorder - it doesn't have to float) GPS-only at 10Hz (no RTC, GPS timestamp, Serial1) for ocean currents / paths
 
 bool serialDisplay  = true;  // Set to false to disable all Serial prints after the setup 
@@ -24,17 +24,17 @@ bool displayBool    = false; // Adafruit Feather OLED Display
 int timeZone        = -8;    // time zone of commputer time, as program pulls time from computer to set RTC, but must convert
 
 // ###### SENSORS USED BY SYSTEM ######
-bool salinityBool = true;  // Atlas Scientific Salinity Sensor
-bool ecBool       = true;  // is value enabled on EZO circuit to send?
-bool sBool        = true;  // is value enabled on EZO circuit to send?
-bool tdsBool      = true;  // is value enabled on EZO circuit to send?
-bool sgBool       = true;  // is value enabled on EZO circuit to send?
+bool salinityBool = false;  // Atlas Scientific Salinity Sensor
+bool ecBool       = false;  // is value enabled on EZO circuit to send?
+bool sBool        = false;  // is value enabled on EZO circuit to send?
+bool tdsBool      = false;  // is value enabled on EZO circuit to send?
+bool sgBool       = false;  // is value enabled on EZO circuit to send?
 
 // ###### TEMPERATURE ######
 bool dallasTempBool = false;  // Dallas Temperature sensor
 bool thermTempBool  = false;  // Adafruit Thermistor
 bool pt100Bool      = false;  // Adafruit PT100
-bool brFastTempBool = true;  // Blue Robotics Fast Temperature, powered permanently via Qwiic/STEMMA QT 3.3V
+bool brFastTempBool = false;  // Blue Robotics Fast Temperature, powered permanently via Qwiic/STEMMA QT 3.3V
 
 // ###### PRESSURE ######
 bool pressDFBool  = false;  // DF Robot analog pressure sensor
@@ -139,8 +139,8 @@ void setup() {
     Serial.begin(SYSTEM_BAUD);
     // while (!Serial) { delay(10); }  // THIS MAKES IT HANG SO NFG
     delay(5000);
-    readBatteryVoltage();
-    Serial.print("SYSTEM STARTUP --> voltage is"); Serial.print(battV); Serial.println(" volts");
+    // readBatteryVoltage();
+    // Serial.print("SYSTEM STARTUP --> voltage is"); Serial.print(battV); Serial.println(" volts");
     Serial.print("deviceMode = "); Serial.println(deviceMode);  // ground truth
   }
 

@@ -14,7 +14,7 @@
 #define BPR     7       // pressure only sensor, larger battery, records first 20min of every hr by default (can use 3 in a triangle for calculating wave height/direction??)
 
 // for UH
-#define PRESS_ONLY 8    // 1.5" pvc continuous pressure 
+#define PRESS_ONLY 8    // 1.5" pvc continuous pressure, original first one I made
 
 // for Mokil - two floats and two Temp Loggers with Blue Robotics 
 #define FLOAT_1 9
@@ -30,7 +30,7 @@
 #define PRESS_ONLY_SCH80 16 // schedule 80 for deeper crush depth
 
 //#############################
-#define SYSTEM_NAME MIS_2
+#define SYSTEM_NAME PRESS_ONLY
 //#############################
 
 // Map the numeric SYSTEM_NAME to a readable string for filenames/logs.
