@@ -1,0 +1,28 @@
+# Conda environment for SeaLabMOS-JOT-app-paper.ipynb
+#
+#   conda env create -f environment.yml
+#   conda activate SeaLabMOS-JOT-app-paper
+#   jupyter lab
+#
+# Versions are the ones the notebook was executed and verified against on
+# 2026-07-30. If the solver struggles, loosen the pins to major.minor
+# (e.g. pandas=3.0) — nothing in the notebook depends on a patch release.
+#
+# Only pandas 3.x has been tested. Earlier majors are untested here, not known
+# to be broken.
+
+name: SeaLabMOS-JOT-app-paper
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.12
+  - numpy=2.4.4
+  - pandas=3.0.2
+  - scipy=1.17.1
+  - matplotlib=3.10.8
+  - xarray=2026.7.0
+  - netcdf4=1.7.4        # conda package name is lowercase; imported as netCDF4
+  - gsw=3.6.23           # TEOS-10 / PSS-78, provides gsw.SP_from_C
+  - jupyterlab

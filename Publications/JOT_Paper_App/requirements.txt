@@ -1,0 +1,22 @@
+# pip equivalent of environment.yml, for people not using conda:
+#
+#   python -m venv .venv
+#   .venv\Scripts\activate          (Windows)
+#   source .venv/bin/activate       (macOS / Linux)
+#   pip install -r requirements.txt
+#   jupyter lab
+#
+# Versions verified 2026-08-01 on Python 3.12.
+#
+# netCDF4 and gsw ship binary wheels for common platforms. If pip tries to
+# build either from source, conda-forge (see environment.yml) is the easier
+# route — netCDF4 from source needs the HDF5 and netcdf-c libraries present.
+
+numpy==2.4.4
+pandas==3.0.2
+scipy==1.17.1
+matplotlib==3.10.8
+xarray==2026.7.0
+netCDF4==1.7.4
+gsw==3.6.23
+jupyterlab

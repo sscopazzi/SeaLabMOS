@@ -1,0 +1,17 @@
+# Jupyter
+.ipynb_checkpoints/
+__pycache__/
+
+# environments
+.venv/
+venv/
+.conda/
+
+# OS cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Generated figures are left tracked on purpose so the repo shows the paper
+# figures without needing the data. Uncomment to stop tracking them:
+# plots/
