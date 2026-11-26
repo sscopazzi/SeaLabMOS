@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Aspect Wave LLC
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // RP2040 NEEDS THIS TO BE IN ARDUINO IDE FOR BOARDS
 // https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
 

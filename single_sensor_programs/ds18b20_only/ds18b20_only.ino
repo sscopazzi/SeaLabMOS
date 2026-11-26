@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Aspect Wave LLC
+// SPDX-License-Identifier: MIT
+
 /***************************************************************
   Standalone DS18B20 / DS18S20 temperature reader with optional
   microSD logging.

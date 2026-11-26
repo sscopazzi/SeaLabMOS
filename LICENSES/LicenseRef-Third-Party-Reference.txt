@@ -1,0 +1,11 @@
+Third-party material included for reference
+
+The files under this identifier were made by others: their makers are named in
+each file's copyright line (in REUSE.toml or in the file itself) and in
+THIRD_PARTY_NOTICES.md. They are kept in this repository as received, for
+reference: datasheets, wiring pictures and code their authors published without
+a licence.
+
+Aspect Wave LLC does not own these files and grants no licence to them. None of
+the licences in this repository applies to them. Whatever terms their owners set,
+if any, apply. To reuse one, go to its owner.

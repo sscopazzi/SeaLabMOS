@@ -1,0 +1,144 @@
+version = 1
+SPDX-PackageName = "SeaLabMOS"
+SPDX-PackageSupplier = "Aspect Wave LLC"
+SPDX-PackageDownloadLocation = "https://github.com/sscopazzi/SeaLabMOS"
+
+# When more than one block matches a file, the last one wins: general blocks first, exceptions after.
+
+# Documentation, manuals, course materials, papers, figures and data
+[[annotations]]
+path = ["**.md", "*.pdf", "Course_Materials/**", "Publications/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2025-2026 Aspect Wave LLC"
+SPDX-License-Identifier = "CC-BY-SA-4.0"
+
+[[annotations]]
+path = "Publications/OCEANS_Chicago_2025_Paper_and_Figures/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2025 Aspect Wave LLC"
+SPDX-License-Identifier = "CC-BY-SA-4.0"
+
+[[annotations]]
+path = "Publications/JOT_Paper_Application/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Aspect Wave LLC"
+SPDX-License-Identifier = "CC-BY-SA-4.0"
+
+# Analysis notebooks and their environment files: permissive, so researchers can use them in their own pipelines
+[[annotations]]
+path = "Publications/OCEANS_Chicago_2025_Paper_and_Figures/**.ipynb"
+precedence = "override"
+SPDX-FileCopyrightText = "2025 Aspect Wave LLC"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = ["Publications/JOT_Paper_Application/**.ipynb", "Publications/JOT_Paper_Application/environment.yml",
+        "Publications/JOT_Paper_Application/requirements.txt", "Publications/JOT_Paper_Application/.gitignore"]
+precedence = "override"
+SPDX-FileCopyrightText = "2026 Aspect Wave LLC"
+SPDX-License-Identifier = "MIT"
+
+# Hardware design source: CAD (SolidWorks parts and their STL exports) and the KiCad wiring diagram
+[[annotations]]
+path = ["CAD_FIles/**", "Wire_Diagram/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2025-2026 Aspect Wave LLC"
+SPDX-License-Identifier = "CERN-OHL-S-2.0"
+
+# Compiled firmware (can't carry a header). The libraries linked into it are listed in THIRD_PARTY_NOTICES.md.
+[[annotations]]
+path = "SeaLabCTDv2_master_program/build/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2025-2026 Aspect Wave LLC"
+SPDX-License-Identifier = "GPL-3.0-or-later AND LGPL-2.1-or-later AND LGPL-3.0-or-later AND BSD-3-Clause AND BSD-2-Clause AND MIT"
+
+# Editor settings
+[[annotations]]
+path = ".vscode/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Aspect Wave LLC"
+SPDX-License-Identifier = "CC0-1.0"
+
+# z_v1: SeaLabCTD v1, archived as released, under CC0. Third-party parts follow.
+[[annotations]]
+path = "z_v1/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2020-2024 Aspect Wave LLC"
+SPDX-License-Identifier = "CC0-1.0"
+
+# z_v1 code from others
+[[annotations]]
+path = "z_v1/SeaLabCTD_v1/c_older_version_of_CTD/CTD_deliverables/sensor_testing/pressSensor_test/pressSensor_test.ino"
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2014 Casey Kuhns, SparkFun Electronics", "2020 Aspect Wave LLC"]
+SPDX-License-Identifier = "Beerware AND CC0-1.0"
+
+[[annotations]]
+path = "z_v1/SeaLabCTD_v1/c_older_version_of_CTD/CTD_deliverables/sensor_testing/SD_test/SD_test.ino"
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["Carson Alexander", "2020 Aspect Wave LLC"]
+SPDX-License-Identifier = "LicenseRef-Third-Party-Reference AND CC0-1.0"
+
+[[annotations]]
+path = "z_v1/SeaLabCTD_v1/c_older_version_of_CTD/CTD_deliverables/sensor_testing/tempSensor_test/tempSensor_test.ino"
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["Last Minute Engineers", "2020 Aspect Wave LLC"]
+SPDX-License-Identifier = "LicenseRef-Third-Party-Reference AND CC0-1.0"
+
+# z_v1 datasheets and wiring pictures from their makers, kept for reference
+[[annotations]]
+path = ["z_v1/SeaLabCTD_v1/c_older_version_of_CTD/CTD_deliverables/datasheets_wiring/pressSensor/BAR30-SENSOR-R1-RP.pdf",
+        "z_v1/SeaLabCTD_v1/c_older_version_of_CTD/CTD_deliverables/datasheets_wiring/pressSensor/Press_Sens_Datasheet.pdf"]
+precedence = "override"
+SPDX-FileCopyrightText = "TE Connectivity"
+SPDX-License-Identifier = "LicenseRef-Third-Party-Reference"
+
+[[annotations]]
+path = "z_v1/SeaLabCTD_v1/c_older_version_of_CTD/CTD_deliverables/datasheets_wiring/pressSensor/Press_Sens_Wires.png"
+precedence = "override"
+SPDX-FileCopyrightText = "SparkFun Electronics"
+SPDX-License-Identifier = "LicenseRef-Third-Party-Reference"
+
+[[annotations]]
+path = "z_v1/SeaLabCTD_v1/c_older_version_of_CTD/CTD_deliverables/datasheets_wiring/salinSensor/**"
+precedence = "override"
+SPDX-FileCopyrightText = "Atlas Scientific"
+SPDX-License-Identifier = "LicenseRef-Third-Party-Reference"
+
+[[annotations]]
+path = "z_v1/SeaLabCTD_v1/c_older_version_of_CTD/CTD_deliverables/datasheets_wiring/sdCard/**"
+precedence = "override"
+SPDX-FileCopyrightText = "Adafruit Industries"
+SPDX-License-Identifier = "LicenseRef-Third-Party-Reference"
+
+[[annotations]]
+path = "z_v1/SeaLabCTD_v1/c_older_version_of_CTD/CTD_deliverables/datasheets_wiring/tempSensor/Temp_Sens_Datasheet_1.pdf"
+precedence = "override"
+SPDX-FileCopyrightText = "The DS18B20 probe's vendor (not named in the document)"
+SPDX-License-Identifier = "LicenseRef-Third-Party-Reference"
+
+[[annotations]]
+path = "z_v1/SeaLabCTD_v1/c_older_version_of_CTD/CTD_deliverables/datasheets_wiring/tempSensor/Temp_Sens_Datasheet_2.pdf"
+precedence = "override"
+SPDX-FileCopyrightText = "Maxim Integrated"
+SPDX-License-Identifier = "LicenseRef-Third-Party-Reference"
+
+[[annotations]]
+path = "z_v1/SeaLabCTD_v1/c_older_version_of_CTD/CTD_deliverables/datasheets_wiring/tempSensor/Temp_Sens_Wires.png"
+precedence = "override"
+SPDX-FileCopyrightText = "Last Minute Engineers"
+SPDX-License-Identifier = "LicenseRef-Third-Party-Reference"
+
+[[annotations]]
+path = ["z_v1/SeaLabCTD_v1/c_older_version_of_CTD/CTD_deliverables/datasheets_wiring/pressure_sensor.png",
+        "z_v1/SeaLabCTD_v1/c_older_version_of_CTD/CTD_deliverables/datasheets_wiring/switch.png",
+        "z_v1/SeaLabCTD_v1/c_older_version_of_CTD/CTD_deliverables/datasheets_wiring/through_hulls.png"]
+precedence = "override"
+SPDX-FileCopyrightText = "Blue Robotics Inc."
+SPDX-License-Identifier = "LicenseRef-Third-Party-Reference"
+
+[[annotations]]
+path = "z_v1/SeaLabCTD_v1/c_older_version_of_CTD/CTD_deliverables/datasheets_wiring/Arduino_Uno_Hole_Diagram.webp"
+precedence = "override"
+SPDX-FileCopyrightText = "2011 J. M. DeCristofaro"
+SPDX-License-Identifier = "CC-BY-SA-3.0"

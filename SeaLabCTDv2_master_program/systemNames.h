@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Aspect Wave LLC
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 // THESE ARE MY SYSTEM NAMES, YOUR NAMES WILL BE DIFFERENCE
 
 // TEMP LOGGER SWITCH COLORS

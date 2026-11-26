@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: 2011 Limor Fried/ladyada for Adafruit Industries
+// SPDX-FileCopyrightText: 2025-2026 Aspect Wave LLC
 //
 // SPDX-License-Identifier: MIT
 

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Aspect Wave LLC
+// SPDX-License-Identifier: MIT
+
 // Blue Robotics Bar30 (MS5837) Standalone Example
 #include <Wire.h>
 #include "MS5837.h"

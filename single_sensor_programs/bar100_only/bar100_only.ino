@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2017 Blue Robotics Inc.
+// SPDX-FileCopyrightText: 2025-2026 Aspect Wave LLC
+// SPDX-License-Identifier: MIT
+
 /* Blue Robotics Keller LD Library Example
 -----------------------------------------------------
  

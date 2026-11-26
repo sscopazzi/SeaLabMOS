@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Aspect Wave LLC
+// SPDX-License-Identifier: MIT
+
 // #include <Adafruit_TinyUSB.h>  // REQUIRED for Serial with TinyUSB on RP2040
 #include <Wire.h>
 #include "RTClib.h"

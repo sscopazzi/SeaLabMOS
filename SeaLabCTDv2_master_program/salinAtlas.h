@@ -1,15 +1,21 @@
+// SPDX-FileCopyrightText: 2025-2026 Aspect Wave LLC
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 // /***************************************************************/
-// Atlas Scientific EZO-EC (UART) interface for SeaLabCTDv2.
-// - Initializes EC sensor (salinSetup)
-// - Parses EC/TDS/Salinity/Gravity values (print_EC_data)
-// - Supports PC passthrough mode and autonomous mode with
-//    temperature compensation (salinLoopWithPC / salinLoopWithoutPC).
-// - This code was written in the Arduino 2.3.2 IDE
+// Atlas Scientific EZO-EC conductivity circuit on Serial1 (UART) for SeaLabCTDv2.
+// - salinSetup(): starts Serial1 and the circuit's enable pin (off at start)
+// - parseEzoReply(): splits a reading "EC,TDS,SAL,SG" into ec, tds, sal and grav
+// - salinLoopWithPC(): passes commands typed in the Serial Monitor to the circuit,
+//   and its replies back
+// - salinLoopWithoutPCAndTempComp() / salinLoopWithoutPCNoTempComp(): one reading
+//   on request, with or without temperature compensation
 // /***************************************************************/
 
-String inputstring = "";   //a string to hold incoming data from the PC
-String sensorstring = "";  //a string to hold the data from the Atlas Scientific product
+constexpr size_t EZO_REPLY_MAX = 50;   // EC alone can run to 8+ characters at high conductivity
+
+String pcLine;    // a command typed in the Serial Monitor, on its way to the circuit
+String ezoLine;   // one reply line from the circuit
 
 extern float brFastTemp;
 extern float dallasTemp;
@@ -17,96 +23,46 @@ extern bool ecBool;
 extern bool sBool;
 
 inline void salinSetup() {
-  Serial1.begin(SALINITY_BAUD);       //set baud rate for software serial port_3 to 9600 (default of sensor)
-  inputstring.reserve(10);   //set aside some bytes for receiving data from the PC
-  sensorstring.reserve(50);  //set aside some bytes for receiving data from Atlas Scientific product
-  pinMode(SALINITY_ENABLE_PIN, OUTPUT);   // enable pin for salinity board
-  digitalWrite(SALINITY_ENABLE_PIN, LOW); // turn off at system start
+  Serial1.begin(SALINITY_BAUD);            // the EZO-EC's UART (9600 baud by default)
+  pcLine.reserve(10);
+  ezoLine.reserve(EZO_REPLY_MAX);
+  pinMode(SALINITY_ENABLE_PIN, OUTPUT);    // power-enable for the EZO-EC board
+  digitalWrite(SALINITY_ENABLE_PIN, LOW);  // off at system start
 }
 
-inline void print_EC_data(void) {
-  char sensorstring_array[50];  // was 30 — EC alone can be 8+ chars at high conductivity
-  char *EC;
-  char *TDS;
-  char *SAL;
-  char *GRAV;
-
-  sensorstring.toCharArray(sensorstring_array, 50);  // match the array size
-  EC   = strtok(sensorstring_array, ",");
-  TDS  = strtok(NULL, ",");
-  SAL  = strtok(NULL, ",");
-  GRAV = strtok(NULL, ",");
-
-  ec   = (EC   != NULL) ? atof(EC)   : 999.0;
-  sal  = (SAL  != NULL) ? atof(SAL)  : 999.0;
-  tds  = (TDS  != NULL) ? atof(TDS)  : 999.0;
-  grav = (GRAV != NULL) ? atof(GRAV) : 999.0;
+// A reading is comma-separated, in the order the circuit's output is set up:
+// EC, TDS, salinity, specific gravity. A missing field reads 999.
+inline void parseEzoReply() {
+  char buf[EZO_REPLY_MAX];
+  ezoLine.toCharArray(buf, sizeof buf);
+  float *dest[] = { &ec, &tds, &sal, &grav };
+  char *field = strtok(buf, ",");
+  for (float *d : dest) {
+    *d = (field != NULL) ? atof(field) : 999.0;
+    field = strtok(NULL, ",");
+  }
 }
 
-/// OLD
-// inline void print_EC_data(void) {  //this function will pars the string
-
-//   char sensorstring_array[30];  //we make a char array
-//   char *EC;                     //char pointer used in string parsing
-//   char *TDS;                    //char pointer used in string parsing
-//   char *SAL;                    //char pointer used in string parsing
-//   char *GRAV;                   //char pointer used in string parsing
-//   // float f_ec;                                         //used to hold a floating point number that is the EC
-
-//   // sensorstring.trim();
-//   sensorstring.toCharArray(sensorstring_array, 30);  //convert the string to a char array
-//   // Serial.println(sensorstring_array);              //debugging
-//   EC = strtok(sensorstring_array, ",");  //let's pars the array at each comma
-//   TDS = strtok(NULL, ",");               //let's pars the array at each comma
-//   SAL = strtok(NULL, ",");               //let's pars the array at each comma
-//   GRAV = strtok(NULL, ",");              //let's pars the array at each comma
-
-//   ec = atof(EC);      //uncomment this line to convert the char to a float
-//   sal = atof(SAL);    //uncomment this line to convert the char to a float
-//   tds = atof(TDS);    //uncomment this line to convert the char to a float
-//   grav = atof(GRAV);  //uncomment this line to convert the char to a float
-// }
-
-// inline void print_EC_data(void) {
-//     sensorstring.trim();  // remove leading/trailing whitespace and CR/LF
-
-//     // Serial.print("RAW sensorstring: '");
-//     // Serial.println(sensorstring);
-
-//     char sensorstring_array[30];
-//     sensorstring.toCharArray(sensorstring_array, 30);
-
-//     char *EC  = strtok(sensorstring_array, ",");
-//     char *SAL = strtok(NULL, ",");
-
-//     ec  = (EC  != NULL) ? atof(EC)  : 777;
-//     sal = (SAL != NULL) ? atof(SAL) : 777;
-
-//     // Serial.print("EC  = "); Serial.println(ec, 4);
-//     // Serial.print("Sal = "); Serial.println(sal, 4);
-// }
-
-
+// Every reply is echoed to USB serial. A reading starts with a digit and is also parsed;
+// status replies (*OK, *ER and the like) are only echoed.
+inline void handleEzoReply() {
+  Serial.println(ezoLine);
+  if (isdigit(ezoLine[0])) parseEzoReply();
+}
 
 void salinLoopWithPC() {
-  if (Serial.available()) {                    //if a string from the PC has been received in its entirety
-    inputstring = Serial.readStringUntil(13);  //read the string until we see a <CR>
-    Serial1.print(inputstring);                //send that string to the Atlas Scientific product
-    Serial1.print('\r');                       //add a <CR> to the end of the string
-    inputstring = "";                          //clear the string
+  if (Serial.available()) {                    // a command from the Serial Monitor: pass it on, ending in <CR>
+    pcLine = Serial.readStringUntil('\r');
+    Serial1.print(pcLine);
+    Serial1.print('\r');
+    pcLine = "";
   }
 
-  sensorstring.remove(0);                        // Removes all characters
-  if (Serial1.available()) {                     //if a string from the Atlas Scientific product has been received in its entirety
-    sensorstring = Serial1.readStringUntil(13);  //read the string until we see a <CR>
-    if (isdigit(sensorstring[0]) == false) {     //if the first character in the string is a digit
-      Serial.println(sensorstring);              //send that string to the PC's serial monitor
-    } else                                       //if the first character in the string is NOT a digit
-    {
-      Serial.println(sensorstring);
-      print_EC_data();  //then call this function
-    }
-    sensorstring = "";  //clear the string
+  ezoLine = "";
+  if (Serial1.available()) {                   // a reply from the circuit, up to its <CR>
+    ezoLine = Serial1.readStringUntil('\r');
+    handleEzoReply();
+    ezoLine = "";
   }
 }
 
@@ -122,68 +78,27 @@ void debugSerial1Raw() {
     }
 }
 
-void salinLoopWithoutPCAndTempComp(float tempCForComp) {
+// One reading on request: clear anything left in the UART, send the command, wait up to
+// 1.5 s for the reply (about 600 ms) and handle it.
+inline void ezoReadOnce(const String &cmd) {
   while (Serial1.available()) Serial1.read();          // flush boot/leftover chatter
+  Serial1.print(cmd);
 
-  Serial1.print("RT," + String(tempCForComp, 2) + "\r"); // read WITH temp compensation
-
-  unsigned long t0 = millis();                          // wait for the reading (~600ms)
+  unsigned long t0 = millis();
   while (!Serial1.available() && (millis() - t0) < 1500) { yield(); }
 
-  sensorstring = "";
+  ezoLine = "";
   if (Serial1.available()) {
-    sensorstring = Serial1.readStringUntil(13);
-    if (isdigit(sensorstring[0]) == false) {
-      Serial.println(sensorstring);
-    } else {
-      Serial.println(sensorstring);
-      print_EC_data();
-    }
-    sensorstring = "";
+    ezoLine = Serial1.readStringUntil('\r');
+    handleEzoReply();
+    ezoLine = "";
   }
+}
+
+void salinLoopWithoutPCAndTempComp(float tempCForComp) {
+  ezoReadOnce("RT," + String(tempCForComp, 2) + "\r");  // read WITH temperature compensation
 }
 
 void salinLoopWithoutPCNoTempComp() {
-  while (Serial1.available()) Serial1.read();          // flush boot/leftover chatter
-  Serial1.print("R\r");                                 // read WITHOUT setting temp comp
-  unsigned long t0 = millis();                          // wait for the reading (~600ms)
-  while (!Serial1.available() && (millis() - t0) < 1500) { yield(); }
-  sensorstring = "";
-  if (Serial1.available()) {
-    sensorstring = Serial1.readStringUntil(13);
-    if (isdigit(sensorstring[0]) == false) {
-      Serial.println(sensorstring);
-    } else {
-      Serial.println(sensorstring);
-      print_EC_data();
-    }
-    sensorstring = "";
-  }
+  ezoReadOnce("R\r");                                    // read WITHOUT setting temperature compensation
 }
-
-// my old one
-// void salinLoopWithoutPC(float tempCForComp) {
-//   /* APPLY TEMPERATURE COMPENSATION FROM PROVIDED VALUE
-//      (from any sensor or constant)
-//      COMMAND SYNTAX FROM ATLAS SCIENTIFIC MANUAL:
-//      T,n <cr> | n = any value; floating point or int */ // was RT
-
-//   // Send temperature compensation + read command
-//   // Serial1.print("RT," + String(tempCForComp, 2) + "\r"); 
-//   // delay(50);
-
-//   // Serial1.print("R\r");  // Continuous sample on, we will send T in-situ temp compensation
-
-//   sensorstring.remove(0);                        // Removes all characters
-//   if (Serial1.available()) {                     //if a string from the Atlas Scientific product has been received in its entirety
-//     sensorstring = Serial1.readStringUntil(13);  //read the string until we see a <CR>
-//     if (isdigit(sensorstring[0]) == false) {     //if the first character in the string is a digit
-//       Serial.println(sensorstring);              //send that string to the PC's serial monitor
-//     } else                                       //if the first character in the string is NOT a digit
-//     {
-//       Serial.println(sensorstring);
-//       print_EC_data();  //then call this function
-//     }
-//     sensorstring = "";  //clear the string
-//   }
-// }

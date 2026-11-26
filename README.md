@@ -1,3 +1,5 @@
+# SeaLabMOS™
+
 This work will be presented at MTS Great Lakes in 2025. If curious, I can send you the paper in prep, or check out [my website's page](https://www.sophiescopazzi.com/projects/sealabmos) for some pictures.
 
 ## Current Supported System Types
@@ -52,3 +54,23 @@ This work will be presented at MTS Great Lakes in 2025. If curious, I can send y
 
 > *Note:* Response time and accuracy are from manufacturer specs and initial testing. For reduced costs, static deployments may not need a pressure sensor.  
 > Depth rating for temperature sensors not from Blue Robotics are not specified by manufacturers and depends on sealant/epoxy.
+
+## Credits and licences
+
+Designed by Sophie Scopazzi, Aspect Wave LLC.
+
+- Hardware design (`CAD_FIles/`, `Wire_Diagram/`): CERN-OHL-S-2.0
+- Firmware (`SeaLabCTDv2_master_program/`): GPL-3.0-or-later
+- Single-sensor test sketches and the analysis notebooks: MIT
+- Documentation, course materials, papers and data: CC BY-SA 4.0
+- `z_v1/` (SeaLabCTD v1, archived): CC0 1.0
+
+Each file's licence is in its SPDX header or in `REUSE.toml`. The full texts are in `LICENSES/`, with an
+overview in `LICENSE`. Third-party code and documents, including the libraries in the compiled firmware:
+`THIRD_PARTY_NOTICES.md`.
+
+"SeaLabMOS", "SeaLabCTD", "Aspect Wave" and the logo are trademarks of Aspect Wave LLC: see `TRADEMARKS.md`.
+If you build your own instrument, you're welcome to say it's based on the SeaLabMOS design. If you
+distribute one, give it your own name.
+
+Firmware releases, and the library sources each one carries: `RELEASING.md`. Contributions: `CONTRIBUTING.md`.

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2015 Blue Robotics Inc.
+// SPDX-FileCopyrightText: 2025-2026 Aspect Wave LLC
+// SPDX-License-Identifier: MIT
+
 /* Blue Robotics MS5837 Library Example
 -----------------------------------------------------
 

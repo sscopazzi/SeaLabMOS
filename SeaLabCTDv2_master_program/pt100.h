@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Aspect Wave LLC
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 /***************************************************************/
 // PT100 RTD temperature measurement using Adafruit MAX31865 breakout

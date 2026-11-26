@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Aspect Wave LLC
+// SPDX-License-Identifier: MIT
+
 // ============================================================
 //  SalinityTest.ino
 //  Standalone test sketch for Atlas Scientific EZO-EC (UART)

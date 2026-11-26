@@ -15,27 +15,27 @@
 MS5837 sensor;
 
 //EC
-#include <SoftwareSerial.h>                           //we have to include the SoftwareSerial library, or else we can't use it
-#define rx 2                                          //define what pin rx is going to be
-#define tx 3                                          //define what pin tx is going to be
+#include <SoftwareSerial.h>
+#define EZO_RX_PIN 2
+#define EZO_TX_PIN 3
 
-SoftwareSerial myserial(rx, tx);                      //define how the soft serial port is going to work
+SoftwareSerial ezoSerial(EZO_RX_PIN, EZO_TX_PIN);   // EZO-EC conductivity circuit (UNO pin 2 <- its TX, pin 3 -> its RX)
 
-String inputstring = "";                              //a string to hold incoming data from the PC
-String sensorstring = "";                             //a string to hold the data from the Atlas Scientific product
-boolean input_string_complete = false;                //have we received all the data from the PC
-boolean sensor_string_complete = false;               //have we received all the data from the Atlas Scientific product
+String pcCommand = "";
+String ezoReply = "";
+boolean pcCommandReady = false;
+boolean ezoReplyReady = false;
 
 //SD
 #include <SD.h>
 File dataFile;
 
-void setup() {                                        //set up the hardware
-  Serial.begin(9600);                                 //set baud rate for the hardware serial port_0 to 9600
+void setup() {
+  Serial.begin(9600);
   
-  myserial.begin(9600);                               //set baud rate for the software serial port to 9600
-  inputstring.reserve(10);                            //set aside some bytes for receiving data from the PC
-  sensorstring.reserve(30);                           //set aside some bytes for receiving data from Atlas Scientific product
+  ezoSerial.begin(9600);
+  pcCommand.reserve(10);
+  ezoReply.reserve(30);
 
 //BLUE ROBOT
   // Initialize pressure sensor
@@ -68,75 +68,76 @@ File dataFile = SD.open("dataFile.txt", FILE_WRITE);
 
 }
 
-void serialEvent() {                                  //if the hardware serial port_0 receives a char
-  inputstring = Serial.readStringUntil(13);           //read the string until we see a <CR>
-  input_string_complete = true;                       //set the flag used to tell if we have received a completed string from the PC
+void serialEvent() {
+  pcCommand = Serial.readStringUntil(13);
+  pcCommandReady = true;
 }
 
 void loop() {
 
-  if (input_string_complete == true) {                //if a string from the PC has been received in its entirety
-    myserial.print(inputstring);                      //send that string to the Atlas Scientific product
-    myserial.print('\r');                             //add a <CR> to the end of the string
-    inputstring = "";                                 //clear the string
-    input_string_complete = false;                    //reset the flag used to tell if we have received a completed string from the PC
+  if (pcCommandReady == true) {
+    ezoSerial.print(pcCommand);
+    ezoSerial.print('\r');
+    pcCommand = "";
+    pcCommandReady = false;
   }
 
-  if (myserial.available() > 0) {                     //if we see that the Atlas Scientific product has sent a character
-    char inchar = (char)myserial.read();              //get the char we just received
-    sensorstring += inchar;                           //add the char to the var called sensorstring
-    if (inchar == '\r') {                             //if the incoming character is a <CR>
-      sensor_string_complete = true;                  //set the flag
+  if (ezoSerial.available() > 0) {
+    char rxChar = (char)ezoSerial.read();
+    ezoReply += rxChar;
+    if (rxChar == '\r') {
+      ezoReplyReady = true;
     }
   }
 
-  if (sensor_string_complete == true) {               //if a string from the Atlas Scientific product has been received in its entirety
-    if (isdigit(sensorstring[0]) == false) {          //if the first character in the string is a digit
-      Serial.println(sensorstring);                   //send that string to the PC's serial monitor
+  if (ezoReplyReady == true) {
+    if (isdigit(ezoReply[0]) == false) {
+      Serial.println(ezoReply);
     }
-    else                                              //if the first character in the string is NOT a digit
+    else
     {
-      print_EC_data();                                //then call this function 
+      handleEzoReading();
     }
-    sensorstring = "";                                //clear the string
-    sensor_string_complete = false;                   //reset the flag used to tell if we have received a completed string from the Atlas Scientific product
+    ezoReply = "";
+    ezoReplyReady = false;
   }
 }
 
-void print_EC_data(void) {                            //this function will pars the string  
+// A reading from the EZO-EC: its fields are comma-separated (EC first)
+void handleEzoReading(void) {
 
-  char sensorstring_array[30];                        //we make a char array
-  char *EC;                                           //char pointer used in string parsing
-  char *TDS;                                          //char pointer used in string parsing
-  char *SAL;                                          //char pointer used in string parsing
-  char *GRAV;                                         //char pointer used in string parsing
-  float f_ec;                                         //used to hold a floating point number that is the EC
+  char replyChars[30];
+  char *EC;
+  char *TDS;
+  char *SAL;
+  char *GRAV;
+  float ecValue;
   
-  sensorstring.toCharArray(sensorstring_array, 30);   //convert the string to a char array 
-  EC = strtok(sensorstring_array, ",");               //let's pars the array at each comma
-  TDS = strtok(NULL, ",");                            //let's pars the array at each comma
-  SAL = strtok(NULL, ",");                            //let's pars the array at each comma
-  GRAV = strtok(NULL, ",");                           //let's pars the array at each comma
+  ezoReply.toCharArray(replyChars, 30);
+  EC = strtok(replyChars, ",");
+  TDS = strtok(NULL, ",");
+  SAL = strtok(NULL, ",");
+  GRAV = strtok(NULL, ",");
 
 //PRINT TO SERIAL MONITOR
-  //Serial.print("EC:");     //we now print each value we parsed separately
-//  Serial.print(EC);          //this is the EC value
+  //Serial.print("EC:");
+//  Serial.print(EC);
 //  Serial.print(",");
 
-  //Serial.print("TDS:");    //we now print each value we parsed separately
-//  Serial.print(TDS);         //this is the TDS value
+  //Serial.print("TDS:");
+//  Serial.print(TDS);
 //  Serial.print(",");
   
-  //Serial.print("SAL:");    //we now print each value we parsed separately
-//  Serial.print(SAL);         //this is the salinity value
+  //Serial.print("SAL:");
+//  Serial.print(SAL);
 //  Serial.print(",");
   
-  //Serial.print("GRAV:");   //we now print each value we parsed separately
-//  Serial.print(GRAV);        //this is the specific gravity
+  //Serial.print("GRAV:");
+//  Serial.print(GRAV);
 //  Serial.print(",");
-  //Serial.println();        //this just makes the output easier to read
+  //Serial.println();
   
-//f_ec= atof(EC);            //uncomment this line to convert the char to a float
+//ecValue= atof(EC);
 
 ///////BLUE ROBOT, read sensor
 //sensor.read();
@@ -153,13 +154,13 @@ void print_EC_data(void) {                            //this function will pars 
 //Save EC data to SD card
 File dataFile = SD.open("dataFile.txt", FILE_WRITE);
 
-  dataFile.print(EC);       //this is the EC value
+  dataFile.print(EC);
   dataFile.print(",");
-  dataFile.print(TDS);      //this is the TDS value
+  dataFile.print(TDS);
   dataFile.print(",");
-  dataFile.print(SAL);      //this is the salinity value
+  dataFile.print(SAL);
   dataFile.print(",");
-  //dataFile.print(GRAV);     //this is the specific gravity
+  //dataFile.print(GRAV);
   //dataFile.print(",");
   
 //Save Blue Robot data to SD card

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2010 DFRobot Co.Ltd
+// SPDX-FileCopyrightText: 2025-2026 Aspect Wave LLC
+// SPDX-License-Identifier: MIT
+
 #pragma once
 /*!
  * @file  SEN0257.ino

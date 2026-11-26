@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Aspect Wave LLC
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 // /***************************************************************/
 // Global definitions and utilities for SeaLabCTD data logging.

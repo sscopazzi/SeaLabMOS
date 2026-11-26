@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2025-2026 Aspect Wave LLC
+// SPDX-License-Identifier: MIT
+
 // ============================================================
 // RTC_FastTemp_Test.ino
 // DS3231 RTC  on Wire  — GPIO 2 (SDA)  / GPIO 3 (SCL)   [I2C1, default]
