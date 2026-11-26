@@ -1,6 +1,6 @@
 # SeaLabMOS™
 
-This work will be presented at MTS Great Lakes in 2025. If curious, I can send you the paper in prep, or check out [my website's page](https://www.sophiescopazzi.com/projects/sealabmos) for some pictures.
+This work was presented at MTS Great Lakes in 2025. If curious check out [my website's page](https://www.sophiescopazzi.com/projects/sealabmos) for some pictures and links to PDFs of papers.
 
 ## Current Supported System Types
 
