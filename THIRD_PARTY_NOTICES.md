@@ -9,7 +9,7 @@ All the licences below can be combined with GPL-3.0-or-later.
 
 ## Compiled into the published firmware
 
-`SeaLabCTDv2_master_program/build/` holds a compiled image of the SeaLabCTDv2 firmware (`.bin`, `.uf2`,
+`SeaLabMOS_master_program/build/` holds a compiled image of the SeaLabMOS firmware (`.bin`, `.uf2`,
 `.elf`, `.map`). The libraries below are the ones its linker map shows linked in. The copyright lines and
 licences were read from each project's current source; the image was built with whatever versions were
 installed at the time, so check the versions when you rebuild.
@@ -45,15 +45,15 @@ Other libraries the source can use, but that are not in the published image: Ada
 
 ## Code from others inside this repository's files
 
-- `SeaLabCTDv2_master_program/pressDF.h`: DFRobot's SEN0257 water-pressure demo, Copyright (c) 2010 DFRobot
+- `SeaLabMOS_master_program/pressDF.h`: DFRobot's SEN0257 water-pressure demo, Copyright (c) 2010 DFRobot
   Co.Ltd, MIT. Its notice is kept in the file.
-- `SeaLabCTDv2_master_program/light.h` and `pt100.h` follow the example sketches of the Adafruit AS726x and
+- `SeaLabMOS_master_program/light.h` and `pt100.h` follow the example sketches of the Adafruit AS726x and
   MAX31865 libraries (notices below).
 - `single_sensor_programs/bar02_only` and `bar100_only`: Blue Robotics' MS5837 and Keller LD library
   examples, Copyright (c) 2015 and (c) 2017 Blue Robotics Inc., MIT. Their notices are kept in the files.
 - `single_sensor_programs/thermistor_only`: Thermistor Example #3 from Adafruit's thermistor guide,
   2011 Limor Fried/ladyada for Adafruit Industries, MIT.
-- `z_v1/` (archived SeaLabCTD v1):
+- `z_v1/` (the archived first version):
   - `.../sensor_testing/pressSensor_test`: SparkFun's MS5803 demo, Casey Kuhns @ SparkFun Electronics, 2014,
     "beerware" (`LICENSES/Beerware.txt`).
   - `.../sensor_testing/SD_test`: an SD logger "by Carson Alexander", no licence given.

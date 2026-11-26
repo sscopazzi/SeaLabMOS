@@ -1,6 +1,6 @@
-# SeaLabCTD MTS Paper Deployments and Figures
+# SeaLabMOS MTS Paper Deployments and Figures
 
-This folder contains plots, results, and analysis scripts from the series SeaLabCTD tests conducted April to July 2025 conducted immitely offshore the Valdez Marine Termina, in Port Valdez, Prince William Sound, Alaska. Each folder represents a different deployment.
+This folder contains plots, results, and analysis scripts from the series SeaLabMOS tests conducted April to July 2025 conducted immitely offshore the Valdez Marine Termina, in Port Valdez, Prince William Sound, Alaska. Each folder represents a different deployment.
 
 ---
 
@@ -37,7 +37,7 @@ All figures used in the MTS paper. All figures are located in their respective t
 
 | Figure | Description |
 |--------|-------------|
-| **Hand Deployment**<br><img src="handDeploymentMethod.jpg" alt="Hand deployment with SeaLabCTD, shackle and bucket for rope" width="40%"> | Method used to lower the CTD. A shackle is used as weight; a bucket prevents line tangling. |
+| **Hand Deployment**<br><img src="handDeploymentMethod.jpg" alt="Hand deployment with SeaLabMOS, shackle and bucket for rope" width="40%"> | Method used to lower the CTD. A shackle is used as weight; a bucket prevents line tangling. |
 | **Battery Endurance**<br><img src="10testEndurance/testEndurance_battV_real_and_estimate.jpg" alt="Battery test results showing endurance vs clock speed" width="40%"> | Runtime comparison at 200 MHz vs 50 MHz. Estimation of endurance for different Adafruit batteries. |
 | **Lowering Speed Comparison**<br><img src="loweringSpeed/loweringSpeed_temp.jpg" alt="Deployment speed effect on data resolution" width="40%"> | Slow (6.4 cm/s) vs fast (52 cm/s) lowering shows how descent rate affects data fidelity. |
 | **Salinity Over Time**<br><img src="multiVMT/allTests_salt.jpg" alt="Salinity profiles from April to July, inset highlights surface layer" width="40%"> | Progressive surface freshening and salinity increase at depth across seasons. |

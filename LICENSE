@@ -5,15 +5,15 @@ This repository uses more than one licence. Each file's licence is given by its 
 REUSE.toml. The full texts are in LICENSES/.
 
   Hardware design (CAD_FIles/, Wire_Diagram/)                                CERN-OHL-S-2.0
-  Firmware (SeaLabCTDv2_master_program/, and its compiled image in build/)   GPL-3.0-or-later
+  Firmware (SeaLabMOS_master_program/, and its compiled image in build/)     GPL-3.0-or-later
   Single-sensor test sketches (single_sensor_programs/)                      MIT
   Analysis notebooks and their environment files (Publications/)             MIT
   Documentation, manuals, course materials, papers, figures and data         CC-BY-SA-4.0
-  z_v1/ (SeaLabCTD v1, archived as released)                                 CC0-1.0
+  z_v1/ (the first version, archived as released)                            CC0-1.0
   Third-party code and documents                                             see THIRD_PARTY_NOTICES.md
 
-None of these licences grants rights to the SeaLabMOS, SeaLabCTD or Aspect Wave names or the Aspect Wave
-logo: see TRADEMARKS.md.
+None of these licences grants rights to the SeaLabMOS or Aspect Wave names or the Aspect Wave logo:
+see TRADEMARKS.md.
 
 Source Location (CERN-OHL-S-2.0): https://github.com/sscopazzi/SeaLabMOS
 

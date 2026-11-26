@@ -1,12 +1,12 @@
 # Releasing firmware
 
-The compiled SeaLabCTDv2 firmware (`.uf2`, `.bin`) has two LGPL libraries built into it: the Arduino-Pico
+The compiled SeaLabMOS firmware (`.uf2`, `.bin`) has two LGPL libraries built into it: the Arduino-Pico
 core (LGPL-2.1-or-later) and Adafruit NeoPixel (LGPL-3.0-or-later). The LGPL lets you hand out the compiled
 image only if the source of those libraries, at the versions you built with, can be had from the same
 place. For this repository, that place is a GitHub release. The firmware's own source, under the GPL, has to
 be there as well.
 
-Whenever a compiled image is published, whether a new one in `SeaLabCTDv2_master_program/build/` or one
+Whenever a compiled image is published, whether a new one in `SeaLabMOS_master_program/build/` or one
 attached to a release, make a GitHub release for that same commit.
 
 ## What goes in the release
@@ -15,7 +15,7 @@ attached to a release, make a GitHub release for that same commit.
    `firmware-2026-11-26`. GitHub adds that commit's "Source code" archives to the release by itself. They are
    the firmware's complete source, with `LICENSES/` (GPL, LGPL-2.1 and LGPL-3.0 texts) and
    `THIRD_PARTY_NOTICES.md`.
-2. **The image**: `SeaLabCTDv2_master_program.ino.uf2` (and `.bin` if you publish it).
+2. **The image**: `SeaLabMOS_master_program.ino.uf2` (and `.bin` if you publish it).
 3. **The Arduino-Pico core, at the version used**: the board package from the core's own release page,
    unchanged. For 5.5.0 that is `rp2040-5.5.0.zip` (110 MB):
    https://github.com/earlephilhower/arduino-pico/releases/download/5.5.0/rp2040-5.5.0.zip
@@ -41,9 +41,8 @@ repository.
 - **Libraries**: Library Manager, Installed. List each one that `THIRD_PARTY_NOTICES.md` names under
   "Compiled into the published firmware".
 
-## The image that is in `build/` now
+## The first release
 
-It was built with Arduino-Pico 5.5.0. Make the first release from the commit that adds this file. Attach
-`rp2040-5.5.0.zip` and the NeoPixel source archive for the version installed when that image was built. If you
-can't be sure which NeoPixel version that was, rebuild the image with the versions you have now, replace the
-one in `build/`, and release that.
+Build the image with Arduino-Pico 5.5.0 and Adafruit NeoPixel 1.15.4 (Sketch > Export Compiled Binary), commit it
+in `SeaLabMOS_master_program/build/` with the rest of the change, and make the release from that commit. Attach
+`rp2040-5.5.0.zip` and `Adafruit_NeoPixel-1.15.4.zip`.

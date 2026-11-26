@@ -47,7 +47,7 @@ SPDX-License-Identifier = "CERN-OHL-S-2.0"
 
 # Compiled firmware (can't carry a header). The libraries linked into it are listed in THIRD_PARTY_NOTICES.md.
 [[annotations]]
-path = "SeaLabCTDv2_master_program/build/**"
+path = "SeaLabMOS_master_program/build/**"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2025-2026 Aspect Wave LLC"
 SPDX-License-Identifier = "GPL-3.0-or-later AND LGPL-2.1-or-later AND LGPL-3.0-or-later AND BSD-3-Clause AND BSD-2-Clause AND MIT"
@@ -59,7 +59,7 @@ precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 Aspect Wave LLC"
 SPDX-License-Identifier = "CC0-1.0"
 
-# z_v1: SeaLabCTD v1, archived as released, under CC0. Third-party parts follow.
+# z_v1: the first version, archived as released, under CC0. Third-party parts follow.
 [[annotations]]
 path = "z_v1/**"
 precedence = "aggregate"

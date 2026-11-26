@@ -16,7 +16,7 @@
   Libraries: OneWire (Jim Studt, Tom Pollard), SdFat - Adafruit Fork
 
   This code was
-  1) Made from https://github.com/sscopazzi/SeaLabMOS/blob/main/SeaLabCTDv2_master_program/dallasTemp.h
+  1) Made from https://github.com/sscopazzi/SeaLabMOS/blob/main/SeaLabMOS_master_program/dallasTemp.h
   2) Which itself is from the libraries example
   3) Made using Claude Opus 5.5 Medium
 

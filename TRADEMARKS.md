@@ -1,6 +1,6 @@
 # Trademarks
 
-"SeaLabMOS" and "SeaLabCTD" as names of oceanographic instruments, "Aspect Wave", and the Aspect Wave logo
+"SeaLabMOS" as the name of oceanographic instruments, "Aspect Wave", and the Aspect Wave logo
 are trademarks of Aspect Wave LLC. The open licences in this repository cover copyright (and, under
 CERN-OHL-S, patents). They grant no rights to these trademarks. CC0, which covers `z_v1/`, says itself that
 it waives no trademark rights.
@@ -16,7 +16,7 @@ You need written permission from Aspect Wave LLC to:
   instrument it did not.
 
 If you distribute a modified instrument or modified firmware, give it a different name. Remove or replace
-the SeaLabMOS, SeaLabCTD and Aspect Wave names and the logo in the firmware's screens, labels and
+the SeaLabMOS and Aspect Wave names and the logo in the firmware's screens, labels and
 documentation. Keep the copyright and licence notices.
 
 Contact: https://aspectwave.io

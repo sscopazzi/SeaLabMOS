@@ -4,7 +4,7 @@
 // ============================================================
 //  SalinityTest.ino
 //  Standalone test sketch for Atlas Scientific EZO-EC (UART)
-//  on the SeaLabCTDv2 hardware (RP2040 / Raspberry Pi Pico).
+//  on the SeaLabMOS hardware (RP2040 / Raspberry Pi Pico).
 //
 //  Matches master-program pinouts:
 //    Serial1         — EZO-EC UART (same as master)
@@ -90,7 +90,7 @@ void setup() {
 
   Serial.begin(SYSTEM_BAUD);
   delay(3000);   // give the Serial Monitor time to connect
-  Serial.println("=== SeaLabCTD Salinity Test ===");
+  Serial.println("=== SeaLabMOS Salinity Test ===");
 
 #if TEST_MODE == PC_PASSTHROUGH
   Serial.println("Mode: PC PASSTHROUGH");
